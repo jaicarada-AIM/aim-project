@@ -45,7 +45,7 @@
     padding: 20px;
     border-radius: 8px;
     margin: 0 auto 20px auto;
-    max-width: 1100px;
+    max-width: 1150px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   }
 
@@ -58,7 +58,7 @@
 
   .legend-row {
     display: flex;
-    flex-wrap: wrap; /* Allows legend to wrap on smaller screens */
+    flex-wrap: wrap;
     gap: 10px;
     font-size: 12px;
     font-weight: bold;
@@ -74,13 +74,13 @@
 
   /* --- OFFICIAL ST. LUKE'S STATUS COLORS --- */
   .row-present    { background-color: #ffffff; }
-  .row-lacking    { background-color: #f8d7da !important; color: #721c24; } /* Red */
-  .row-expired    { background-color: #fff3cd !important; color: #856404; } /* Yellow */
-  .row-damaged    { background-color: #fad7a1 !important; color: #8a6d3b; } /* Orange */
-  .row-turnin     { background-color: #cce5ff !important; color: #004085; } /* Blue */
-  .row-notable    { background-color: #d6d8db !important; color: #383d41; } /* Dark Gray */
-  .row-unlabelled { background-color: #e2d9f3 !important; color: #4a235a; } /* Purple */
-  .row-excess     { background-color: #d4edda !important; color: #155724; } /* Green */
+  .row-lacking    { background-color: #f8d7da !important; color: #721c24; } 
+  .row-expired    { background-color: #fff3cd !important; color: #856404; } 
+  .row-damaged    { background-color: #fad7a1 !important; color: #8a6d3b; } 
+  .row-turnin     { background-color: #cce5ff !important; color: #004085; } 
+  .row-notable    { background-color: #d6d8db !important; color: #383d41; } 
+  .row-unlabelled { background-color: #e2d9f3 !important; color: #4a235a; } 
+  .row-excess     { background-color: #d4edda !important; color: #155724; } 
 
   /* --- TABLE STYLES --- */
   .inspector-drawer-title {
@@ -91,14 +91,14 @@
     border-radius: 8px 8px 0 0;
     font-weight: bold;
     font-size: 16px;
-    max-width: 1100px;
+    max-width: 1150px;
     margin-left: auto;
     margin-right: auto;
   }
 
   .inspector-table {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1150px;
     margin: 0 auto 20px auto;
     background: white;
     border-collapse: collapse;
@@ -109,7 +109,7 @@
 
   .inspector-table th, .inspector-table td {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 8px;
     text-align: left;
     font-size: 14px;
     transition: background-color 0.3s;
@@ -132,6 +132,15 @@
     border-radius: 4px;
     border: 1px solid #ccc;
     text-align: center;
+  }
+
+  .expected-qty-badge {
+    background-color: #eee;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #333;
+    display: inline-block;
   }
 
   .btn {
@@ -165,47 +174,118 @@
 <div id="mainApp">
   <div class="header-container">
     <h1 class="banner-title">A.I.M. AUDIT</h1>
-    <span class="banner-subtitle">Official Inspector Mode</span>
+    <span class="banner-subtitle">Smart Inspector Mode</span>
   </div>
-
   <div id="resultsContainer"></div>
 </div>
 
 <script>
-  // --- INVENTORY DATABASE (FULL CART STRUCTURE) ---
+  // --- INVENTORY DATABASE WITH EXPECTED QTY ADDED ---
   const inventory = [
     // --- INTUBATION KIT ---
-    { code: "23003347", desc: "Laryngoscope batteries AA (extra)", uom: "PC", cart: ["Combined", "Adult", "Neonatal"], drawer: "0 - Intubation Kit" },
-    { code: "34040379", desc: "Laryngoscope bulb #4 WA", uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
-    
+    { code: "80500026", desc: "AMBUBAG ADULT", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "80500028", desc: "AMBUBAG NEONATE", qty: 1, uom: "PC", cart: ["Neonatal"], drawer: "0 - Intubation Kit" },
+    { code: "87500013", desc: "BACTERIA FILTER BARRIERBAC", qty: 2, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "43817009", desc: "XYLOCAINE 10% PUMP SPRAY 50ML", qty: 1, uom: "BOT", cart: ["Combined", "Adult", "Neonatal"], drawer: "0 - Intubation Kit" },
+    { code: "84300015", desc: "LUBRISAFE LUBRICATING JELLY 10 GM", qty: 2, uom: "PC", cart: ["Combined", "Adult", "Neonatal"], drawer: "0 - Intubation Kit" },
+    { code: "87500019", desc: "NIPPLE & NUT ADAPTOR", qty: 5, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "85701003", desc: "SYRINGE 10CC W/ NEEDLE LUER LOCK", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "86000012", desc: "INTUBATING STYLET ADULT", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "86000010", desc: "INTUBATING STYLET PEDIA", qty: 1, uom: "PC", cart: ["Neonatal"], drawer: "0 - Intubation Kit" },
+    { code: "86000028", desc: "ENDO TUBE STANDARD SIZE 7.0", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "86000147", desc: "ENDO TUBE STANDARD SIZE 7.5", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "84700002", desc: "PLASTER LEUKOPLAST 2\" X 5 METERS", qty: 1, uom: "RL", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "84700000", desc: "PLASTER LEUKOPLAST 3\" X 5 METERS", qty: 1, uom: "RL", cart: ["Neonatal"], drawer: "0 - Intubation Kit" },
+    { code: "82900009", desc: "GLOVES PAIRED 7.0 STERILE", qty: 1, uom: "PR", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "82900011", desc: "GLOVES PAIRED 7.5 STERILE", qty: 1, uom: "PR", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "82900010", desc: "GLOVES PAIRED 6.5 STERILE", qty: 2, uom: "PR", cart: ["Neonatal"], drawer: "0 - Intubation Kit" },
+    { code: "23003347", desc: "Laryngoscope batteries AA (extra)", qty: 2, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "34040379", desc: "Laryngoscope bulb #4 WA", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "23000106", desc: "Penlight", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+    { code: "23003355", desc: "Penlight batteries AAA", qty: 2, uom: "PC", cart: ["Combined", "Adult"], drawer: "0 - Intubation Kit" },
+
     // --- DRAWER 1 (MEDICATIONS) ---
-    { code: "42964311", desc: "ATROPINE (HIZON) 1 MG/1 ML AMP", uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
-    { code: "44000038", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML AMP", uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
-    
-    // --- DRAWER 2 (AIRWAY & RESPIRATORY) ---
-    { code: "80200008", desc: "AIRWAY NASAL SIZE 7.0 FR. 28", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 2 - Airway" },
-    { code: "86000143", desc: "ENDO TUBE STANDARD SIZE 2.0", uom: "PC", cart: ["Combined", "Neonatal"], drawer: "Drawer 2 - Airway" },
-    
-    // --- DRAWER 3 (IV SUPPLIES & SYRINGES) ---
-    { code: "83900200", desc: "IV CATH AUTOGUARD G-18", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 3 - IV Supplies" },
-    { code: "85701002", desc: "SYRINGE 5CC W/ NEEDLE LUER LOCK", uom: "PC", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 3 - IV Supplies" },
+    { code: "42964311", desc: "ATROPINE (HIZON) 1 MG/1 ML AMP", qty: 5, uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42422511", desc: "ISOKET 10 MG/10 ML (1MG/ML) AMP", qty: 1, uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "44004351", desc: "NSS (EURO-MED) 50 ML VIAL", qty: 2, uom: "VL", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "44000038", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML AMP", qty: 3, uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "48840022", desc: "CALCIUM GLUCONATE (EURO-MED) 10%", qty: 1, uom: "VL", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42410008", desc: "CORDARONE 150 MG/3 ML (50 MG/ML) AMP", qty: 3, uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "44005141", desc: "DEXTROSE 50% (EURO-MED) 50 ML VIAL", qty: 1, uom: "VL", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42460044", desc: "DOBUzef 250 MG/5 ML (50 MG/ML) AMP", qty: 3, uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42410050", desc: "DOPamax 200MG/5ML(40MG/ML) AMP 5'S", qty: 3, uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42410030", desc: "ADRENALINE (EPINEPHrine) 1MG/ML", qty: 20, uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "42410030", desc: "ADRENALINE (EPINEPHrine) 1MG/ML", qty: 10, uom: "AMP", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42460021", desc: "LEVOPHED SF (SULFITE-FREE) 4 MG/4 ML", qty: 4, uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "43817013", desc: "LIDOCAINE 2% (ELIN) 1,000 MG/50 ML", qty: 1, uom: "VL", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "42890011", desc: "magnesium SULFATE (HIZON) 2,500 MG/10 ML", qty: 1, uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42870004", desc: "DORMICUM 5 MG/1 ML AMP", qty: 1, uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42851614", desc: "VaLIUM 10 MG/2 ML (5 MG/ML) AMP", qty: 3, uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "42851614", desc: "VaLIUM 10 MG/2 ML (5 MG/ML) AMP", qty: 6, uom: "AMP", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "49798562", desc: "AMINOSOL 250MG/10ML AMP", qty: 3, uom: "AMP", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42452010", desc: "LASIX 20MG AMP", qty: 1, uom: "AMP", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "46832414", desc: "Solu-CORTEF 100MG A-O-V VIAL", qty: 3, uom: "VL", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42894339", desc: "KEPPRA 100MG/ML X 5ML VIAL", qty: 1, uom: "VL", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "43010032", desc: "NALOCURE 400MCG VIAL", qty: 2, uom: "VL", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "44004350", desc: "STERILE WATER 50ML FOR INJ.", qty: 1, uom: "VL", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "42824897", desc: "MORPHINE SULFATE (DBL) 10MG AMP", qty: 1, uom: "AMP", cart: ["Neonatal"], drawer: "Drawer 1 - Medications" },
 
-    // --- DRAWER 4 (TUBING & PROCEDURAL SUPPLIES) ---
-    { code: "86000011", desc: "SUCTION CONNECTING TUBE FR. 25 X 210CM", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 4 - Tubing & Supplies" },
-    { code: "84000014", desc: "OXYGEN CONNECTING TUBE", uom: "PC", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 4 - Tubing & Supplies" },
-
-    // --- DRAWER 5 (FLUIDS & LARGE SUPPLIES) ---
-    { code: "44000094", desc: "LR (EURO-MED) 1 L SOL'N", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 5 - Fluids" },
+    // --- DRAWER 2 (AIRWAY & MEDICAL SUPPLIES) ---
+    { code: "80200008", desc: "AIRWAY NASAL SIZE 7.0 FR. 28", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 2 - Airway" },
+    { code: "80200010", desc: "AIRWAY NASAL SIZE 7.5 FR. 30", qty: 1, uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 2 - Airway" },
+    { code: "80200012", desc: "AIRWAY ORAL SIZE 1.0 BLUE", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "80200000", desc: "AIRWAY ORAL SIZE 2.0 BLACK", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "83401012", desc: "ANESTHESIA MASK SIZE 1 NEONATE", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "83401007", desc: "ANESTHESIA MASK SIZE 2 INFANT", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "83401013", desc: "ANESTHESIA MASK SIZE 3 TODDLER", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "81800026", desc: "CATHETER SUCTION FR. 10 X 51CM", qty: 2, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "81801032", desc: "CATHETER SUCTION FR. 5 X 50CM", qty: 2, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "81800012", desc: "CATHETER SUCTION FR. 8 X 53CM", qty: 2, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "82700095", desc: "ECG ELECTRODES PEDIA 25/PAC", qty: 10, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "86000143", desc: "ENDO TUBE STANDARD SIZE 2.0", qty: 2, uom: "PC", cart: ["Combined", "Neonatal"], drawer: "Drawer 2 - Airway" },
+    { code: "86000051", desc: "ENDO TUBE STANDARD SIZE 2.5", qty: 2, uom: "PC", cart: ["Combined", "Neonatal"], drawer: "Drawer 2 - Airway" },
+    { code: "86000144", desc: "ENDO TUBE STANDARD SIZE 3.0", qty: 2, uom: "PC", cart: ["Combined", "Neonatal"], drawer: "Drawer 2 - Airway" },
+    { code: "86000042", desc: "ENDO TUBE STANDARD SIZE 4.0", qty: 2, uom: "PC", cart: ["Combined", "Neonatal"], drawer: "Drawer 2 - Airway" },
+    { code: "86001033", desc: "ENDO TUBE STANDARD SIZE 4.5", qty: 2, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "86000091", desc: "ENDO TUBE STANDARD SIZE 5.0", qty: 2, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "86001028", desc: "ENDO TUBE STANDARD SIZE 5.5", qty: 2, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "86000004", desc: "FEEDING TUBE FR. 5 X 40CM", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "86000003", desc: "FEEDING TUBE FR. 8 X 40CM", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "86000010", desc: "INTUBATING STYLET PEDIA", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "81400008", desc: "NASAL OXYGEN CANNULA PEDIA", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "83400005", desc: "OXYGEN MASK PEDIA W/ RESERVOIR BAG", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "84700002", desc: "PLASTER LEUKOPLAST 2\" X 5 METERS", qty: 1, uom: "RL", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "84701004", desc: "PLASTER MICROPORE 1/2\" X 10 YARDS", qty: 1, uom: "RL", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
+    { code: "85701002", desc: "SYRINGE 5CC W/ NEEDLE LUER LOCK", qty: 1, uom: "PC", cart: ["Combined"], drawer: "Drawer 2 - Airway" },
     
-    // --- DRAWER 6 (SPECIAL EQUIPMENT & EXTERNAL) ---
-    { code: "80500026", desc: "AMBUBAG ADULT", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 6 - Equipment" },
-    { code: "82700096", desc: "ECG ELECTRODES ADULT RED DOT 50/PAC", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 6 - Equipment" }
+    // --- ADULT & NEONATAL CART SPECIFIC DRAWER 2 (IV & PROCEDURAL) ---
+    { code: "48459921", desc: "BD ALCOHOL SWAB 70% ALCOHOL WIPES 100'S", qty: 20, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83300014", desc: "CLAVE TRI-FUSE EXTENSION SET", qty: 2, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "82300001", desc: "COTTON BALLS STERILE 6'S", qty: 5, uom: "PAC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "82700096", desc: "2560 ELECTRODES ADULT RED DOT 50/PAC", qty: 10, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "84300048", desc: "ECG PAPER DEFIBRILLATOR - PHILIPS", qty: 1, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83900134", desc: "I.V. START PACK", qty: 2, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "86701092", desc: "INFUSION PUMP SET 2-CLAVE", qty: 2, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83900200", desc: "IV CATH AUTOGUARD G-18", qty: 5, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83900202", desc: "IV CATH AUTOGUARD G-20", qty: 5, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83900204", desc: "IV CATH AUTOGUARD G-22", qty: 5, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83900208", desc: "IV CATH AUTOGUARD G-24", qty: 5, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "86701094", desc: "MACROSET HOSPIRA LUER-LOCK", qty: 2, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "84701005", desc: "PLASTER MICROPORE 1\" X 10 YARDS", qty: 1, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "84701006", desc: "PLASTER MICROPORE 2\" X 10 YARDS", qty: 1, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "83300008", desc: "STOPCOCK 3-WAY LUER-LOCK CONNECTA BD", qty: 3, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "85701003", desc: "SYRINGE 10CC W/ NEEDLE LUER LOCK", qty: 5, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "85701018", desc: "SYRINGE 1CC TUBERCULINE W/ NEEDLE", qty: 5, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "85701001", desc: "SYRINGE 3.0CC W/ NEEDLE LUER LOCK", qty: 5, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "85701005", desc: "SYRINGE 30CC LUER LOCK", qty: 2, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "85701033", desc: "SYRINGE 50/60CC LUERLOCK", qty: 2, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "85701028", desc: "SYRINGE PF SALINE FLUSH 10ML UNIMEX", qty: 10, uom: "PC", cart: ["Adult"], drawer: "Drawer 2 - Medical Supplies" },
+    { code: "81400002", desc: "WITHDRAWAL CANNULA", qty: 2, uom: "PC", cart: ["Adult", "Neonatal"], drawer: "Drawer 2 - Medical Supplies" }
   ];
 
   const uomDictionary = { "AMP": "Ampoule", "VL": "Vial", "PC": "Piece", "PAC": "Pack", "RL": "Roll", "TUB": "Tube", "BOX": "Box", "BOT": "Bottle", "PR": "Pair", "PAD": "Pad", "VSET": "Set" };
   const resultsContainer = document.getElementById('resultsContainer');
 
-  // Load Combined Cart on startup
   window.onload = function() {
     renderInspectorChecklist('Combined');
   };
@@ -215,14 +295,14 @@
       <div class="inspector-header-panel">
         <div class="controls-row">
           <div>
-            <h2 style="margin:0; color:#333;">E-Cart Audit Checklist</h2>
-            <p style="margin:5px 0 0; color:#666; font-size:14px;">Input QTY and Expiry Dates. Status colors update automatically.</p>
+            <h2 style="margin:0; color:#333;">Smart Audit Checklist</h2>
+            <p style="margin:5px 0 0; color:#666; font-size:14px;">Type the Actual QTY and Date. Status will auto-calculate!</p>
           </div>
           <div style="display: flex; gap: 10px; align-items: center;">
             <select id="cartSelector" onchange="renderInspectorChecklist(this.value)" style="padding: 10px; border-radius: 6px; border: 2px solid #1a365d; font-size: 16px; font-weight: bold;">
-              <option value="Combined" ${selectedCart === 'Combined' ? 'selected' : ''}>Combined E-Cart (57 Units)</option>
-              <option value="Adult" ${selectedCart === 'Adult' ? 'selected' : ''}>Adult E-Cart (14 Units)</option>
-              <option value="Neonatal" ${selectedCart === 'Neonatal' ? 'selected' : ''}>Neonatal E-Cart (3 Units)</option>
+              <option value="Combined" ${selectedCart === 'Combined' ? 'selected' : ''}>Combined E-Cart</option>
+              <option value="Adult" ${selectedCart === 'Adult' ? 'selected' : ''}>Adult E-Cart</option>
+              <option value="Neonatal" ${selectedCart === 'Neonatal' ? 'selected' : ''}>Neonatal E-Cart</option>
             </select>
             <button class="btn btn-export" onclick="exportToCSV('${selectedCart}')">📥 Export to Excel</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
@@ -230,7 +310,7 @@
         </div>
         
         <div class="legend-row">
-          <div class="legend-item" style="background: #ffffff;">✅ Present (Default)</div>
+          <div class="legend-item" style="background: #ffffff;">✅ Present</div>
           <div class="legend-item" style="background: #f8d7da; color: #721c24;">❌ Lacking</div>
           <div class="legend-item" style="background: #fff3cd; color: #856404;">⚠️ Expired</div>
           <div class="legend-item" style="background: #fad7a1; color: #8a6d3b;">🛠️ Damaged</div>
@@ -242,7 +322,7 @@
       </div>
     `;
 
-    const cartItems = inventory.filter(item => item.cart && item.cart.includes(selectedCart) && !item.isAlt);
+    const cartItems = inventory.filter(item => item.cart && item.cart.includes(selectedCart));
     const groupedByDrawer = cartItems.reduce((acc, item) => {
       let drawerName = item.drawer || "Unassigned Items";
       if (!acc[drawerName]) acc[drawerName] = [];
@@ -259,6 +339,7 @@
         <table class="inspector-table" id="table-${drawer.replace(/\s+/g, '-')}">
           <tr>
             <th style="width: 155px;">Audit Status</th>
+            <th style="width: 70px; text-align: center;">Exp. QTY</th>
             <th style="width: 80px; text-align: center;">Act. QTY</th>
             <th style="width: 130px;">Expiry Date</th>
             <th>Item Code</th>
@@ -269,9 +350,9 @@
       items.forEach(item => {
         const fullUomName = uomDictionary[item.uom] || item.uom;
         html += `
-          <tr class="row-present data-row">
+          <tr class="row-present data-row" data-expected="${item.qty}">
             <td>
-              <select class="status-select" onchange="updateRowColor(this)">
+              <select class="status-select" onchange="manualColorOverride(this)">
                 <option value="Present">✅ Present</option>
                 <option value="Lacking">❌ Lacking</option>
                 <option value="Expired">⚠️ Expired</option>
@@ -283,10 +364,13 @@
               </select>
             </td>
             <td style="text-align: center;">
-              <input type="number" class="input-field qty-input" min="0" placeholder="Qty" style="width: 60px;">
+              <span class="expected-qty-badge">${item.qty}</span>
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="input-field qty-input" min="0" placeholder="Qty" style="width: 60px;" oninput="autoCalculateStatus(this)">
             </td>
             <td>
-              <input type="date" class="input-field expiry-input" style="width: 110px;">
+              <input type="date" class="input-field expiry-input" style="width: 110px;" oninput="autoCalculateStatus(this)">
             </td>
             <td class="code-cell"><strong>${item.code}</strong></td>
             <td class="desc-cell">${item.desc}</td>
@@ -300,15 +384,50 @@
     resultsContainer.innerHTML = html;
   }
 
-  // --- CHANGE ROW COLOR BASED ON NEW ST. LUKE'S DROPDOWN SELECTION ---
-  function updateRowColor(selectElement) {
+  // --- SMART AUTOMATION LOGIC ---
+  function autoCalculateStatus(element) {
+    const tr = element.closest('tr');
+    const select = tr.querySelector('.status-select');
+    const actualQtyStr = tr.querySelector('.qty-input').value;
+    const expiryStr = tr.querySelector('.expiry-input').value;
+    const expectedQty = parseInt(tr.dataset.expected) || 0;
+    
+    const currentStatus = select.value;
+    if (["Damaged", "For Turn In", "Not Able to Turn In", "Unlabelled"].includes(currentStatus) && element.classList.contains('qty-input')) {
+      return; 
+    }
+
+    let calculatedStatus = "Present";
+
+    if (expiryStr) {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const expDate = new Date(expiryStr);
+      if (expDate < today) {
+        calculatedStatus = "Expired";
+      }
+    }
+
+    if (calculatedStatus !== "Expired" && actualQtyStr !== "") {
+      const actualQty = parseInt(actualQtyStr);
+      if (actualQty < expectedQty) {
+        calculatedStatus = "Lacking";
+      } else if (actualQty > expectedQty) {
+        calculatedStatus = "Excess";
+      }
+    }
+
+    select.value = calculatedStatus;
+    manualColorOverride(select);
+  }
+
+  // --- MANUAL COLOR OVERRIDE ---
+  function manualColorOverride(selectElement) {
     const tr = selectElement.closest('tr');
     const status = selectElement.value;
     
-    // Strip all potential color classes first
     tr.classList.remove('row-present', 'row-lacking', 'row-expired', 'row-damaged', 'row-turnin', 'row-notable', 'row-unlabelled', 'row-excess');
     
-    // Apply the specific color class based on the selected St. Luke's legend
     if (status === 'Present') tr.classList.add('row-present');
     if (status === 'Lacking') tr.classList.add('row-lacking');
     if (status === 'Expired') tr.classList.add('row-expired');
@@ -319,26 +438,26 @@
     if (status === 'Excess') tr.classList.add('row-excess');
   }
 
-  // --- EXPORT TO EXCEL (CSV) FUNCTION ---
   function exportToCSV(cartType) {
     const rows = document.querySelectorAll('.data-row');
     let csvContent = "data:text/csv;charset=utf-8,";
-    
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString();
+    
     csvContent += `E-Cart Audit Report\nCart Type: ${cartType}\nDate: ${date} ${time}\n\n`;
-    csvContent += "Drawer,Status,Actual QTY,Expiry Date,Item Code,Description,UOM\n";
+    csvContent += "Drawer,Audit Status,Expected QTY,Actual QTY,Expiry Date,Item Code,Description,UOM\n";
 
     rows.forEach(row => {
       const drawerTitle = row.closest('table').previousElementSibling.innerText.replace('📁 ', '');
       const status = row.querySelector('.status-select').value;
-      const qty = row.querySelector('.qty-input').value || "0";
+      const expectedQty = row.dataset.expected;
+      const actualQty = row.querySelector('.qty-input').value || "0";
       const expiry = row.querySelector('.expiry-input').value || "N/A";
       const code = row.querySelector('.code-cell').innerText;
       const desc = `"${row.querySelector('.desc-cell').innerText}"`; 
       const uom = row.querySelector('.uom-cell').innerText;
 
-      csvContent += `${drawerTitle},${status},${qty},${expiry},${code},${desc},${uom}\n`;
+      csvContent += `${drawerTitle},${status},${expectedQty},${actualQty},${expiry},${code},${desc},${uom}\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
