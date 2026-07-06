@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A.I.M. | E-Cart Inspector Audit</title>
+<title>A.I.M. | Emergency Cart Tool</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
 
@@ -15,53 +15,72 @@
   #resultsContainer { padding: 20px; }
 
   /* --- INSPECTOR PANEL & LEGEND --- */
-  .inspector-header-panel { background: white; padding: 20px; border-radius: 8px; margin: 0 auto 20px auto; max-width: 1250px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  /* Widened to 1400px to comfortably fit the Remarks column */
+  .inspector-header-panel { background: white; padding: 20px; border-radius: 8px; margin: 0 auto 20px auto; max-width: 1400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
   .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-  .legend-row { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; font-weight: bold; padding-top: 15px; border-top: 1px solid #eee; }
-  .legend-item { padding: 6px 10px; border-radius: 4px; border: 1px solid #ccc; }
+  
+  .legend-row { display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px; font-weight: bold; padding-top: 15px; border-top: 1px solid #eee; }
+  .legend-item { padding: 6px 10px; border-radius: 4px; border: 1px solid #000; text-align: center; }
 
-  /* --- STATUS COLORS --- */
+  /* --- EXACT NEON EXCEL LEGEND COLORS --- */
   .row-present    { background-color: #ffffff; }
-  .row-lacking    { background-color: #f8d7da !important; color: #721c24; } 
-  .row-expired    { background-color: #fff3cd !important; color: #856404; } 
-  .row-damaged    { background-color: #fad7a1 !important; color: #8a6d3b; } 
-  .row-turnin     { background-color: #cce5ff !important; color: #004085; } 
-  .row-notable    { background-color: #d6d8db !important; color: #383d41; } 
-  .row-unlabelled { background-color: #e2d9f3 !important; color: #4a235a; } 
-  .row-excess     { background-color: #d4edda !important; color: #155724; } 
+  .row-not-turned { background-color: #FF00FF !important; color: #ffffff; font-weight: bold; } /* Magenta */
+  .row-lacking    { background-color: #FFA500 !important; color: #000000; font-weight: bold; } /* Orange */
+  .row-turnin     { background-color: #00FF00 !important; color: #000000; font-weight: bold; } /* Lime Green */
+  .row-unlabelled { background-color: #8A2BE2 !important; color: #ffffff; font-weight: bold; } /* Purple */
+  .row-damaged    { background-color: #6AA84F !important; color: #ffffff; font-weight: bold; } /* Olive Green */
+  .row-expired    { background-color: #FF0000 !important; color: #ffffff; font-weight: bold; } /* Red */
+  .row-excess     { background-color: #FFFF00 !important; color: #000000; font-weight: bold; } /* Yellow */
 
   /* --- TABLE STYLES --- */
-  .inspector-drawer-title { background-color: #4da6ff; color: white; padding: 12px; margin-top: 20px; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 16px; max-width: 1250px; margin-left: auto; margin-right: auto; }
-  .inspector-table { width: 100%; max-width: 1250px; margin: 0 auto 20px auto; background: white; border-collapse: collapse; border-radius: 0 0 8px 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-  .inspector-table th, .inspector-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; transition: background-color 0.3s; }
+  .inspector-drawer-title { background-color: #4da6ff; color: white; padding: 12px; margin-top: 20px; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 16px; max-width: 1400px; margin-left: auto; margin-right: auto; }
+  .inspector-table { width: 100%; max-width: 1400px; margin: 0 auto 20px auto; background: white; border-collapse: collapse; border-radius: 0 0 8px 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .inspector-table th, .inspector-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; transition: background-color 0.1s; }
   .inspector-table th { background-color: #ee4d2d; color: white; font-weight: bold; }
   .inspector-table tr:hover { opacity: 0.95; }
   
-  .status-select { padding: 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; width: 135px; }
+  .status-select { padding: 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; width: 155px; }
   .input-field { padding: 6px; border-radius: 4px; border: 1px solid #ccc; text-align: center; }
+  .remarks-input { width: 130px; text-align: left; } /* New style for left-aligned remarks */
   .expected-qty-badge { background-color: #eee; padding: 4px 8px; border-radius: 12px; font-weight: bold; color: #333; display: inline-block; }
 
   .btn { padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; color: white; transition: 0.2s; }
   .btn-print { background-color: #007bff; }
   .btn-export { background-color: #28a745; }
+  
+  .btn-split { background-color: #1a365d; color: white; border: none; border-radius: 4px; padding: 5px 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
+  .btn-split:hover { background-color: #4da6ff; }
 
-  /* --- SIGNATURE FOOTER STYLES --- */
-  .audit-footer { display: none; margin: 40px auto; max-width: 1250px; padding: 20px; background: white; border-top: 3px solid #1a365d; }
+  /* --- SIGNATURE FOOTER & FILL-IN BLANKS --- */
+  .audit-footer { display: none; margin: 40px auto; max-width: 1400px; padding: 20px; background: white; border-top: 3px solid #1a365d; }
   .signatures { display: flex; justify-content: space-between; margin-bottom: 40px; margin-top: 20px;}
   .sig-block { width: 45%; font-size: 14px; }
-  .notes-block { font-size: 14px; line-height: 1.8; }
+  .notes-block { font-size: 14px; line-height: 2.2; }
   .signature-line { margin-top: 40px; border-top: 1px solid #000; padding-top: 5px; }
+  
+  .footer-input {
+    border: none;
+    border-bottom: 1px solid #000;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    padding: 2px 5px;
+    margin: 0 5px;
+    background: transparent;
+  }
+  .footer-input:focus { background-color: #f0f8ff; border-bottom: 2px solid #007bff; }
 
   /* --- PRINT STYLES --- */
   @media print {
     body { background: white !important; }
-    .header-container, .btn, .legend-row { display: none !important; }
+    .header-container, .btn, .legend-row, .btn-split { display: none !important; }
     .inspector-header-panel { box-shadow: none; border: 1px solid #000; padding: 10px; }
     .inspector-table, .inspector-drawer-title { box-shadow: none; border: 1px solid #000; page-break-inside: avoid; }
     .inspector-table th { color: black !important; background-color: #f1f1f1 !important; border: 1px solid #000; }
     .inspector-table td { border: 1px solid #000; }
     input, select { border: none; background: transparent; appearance: none; -webkit-appearance: none; font-weight: bold;}
     .audit-footer { display: block !important; page-break-inside: avoid; } 
+    .footer-input { border-bottom: 1px solid #000 !important; }
   }
 </style>
 </head>
@@ -70,7 +89,7 @@
 <div id="mainApp">
   <div class="header-container">
     <h1 class="banner-title">A.I.M. AUDIT</h1>
-    <span class="banner-subtitle">Official Inspector Mode</span>
+    <span class="banner-subtitle">Emergency Cart Tool</span>
   </div>
   <div id="resultsContainer"></div>
 
@@ -93,9 +112,10 @@
     </div>
     <div class="notes-block">
       <strong>NOTE:</strong><br>
-      *Cardiac Defib : ___________________________ date ___________________________<br>
-      *Intubation Kit Lock: _____________________________________________________<br>
-      *E-Cart lock: ___________________________________________________________
+      *Cardiac Defib : <input type="text" class="footer-input" style="width: 200px;" placeholder="Name"> 
+      date <input type="date" class="footer-input" style="width: 140px;"><br>
+      *Intubation Kit Lock: <input type="text" class="footer-input" style="width: 250px;" placeholder="Enter Lock Number"><br>
+      *E-Cart lock: <input type="text" class="footer-input" style="width: 250px;" placeholder="Enter Lock Number">
     </div>
   </div>
 </div>
@@ -381,7 +401,6 @@
 
   const uomDictionary = { "AMP": "Ampoule", "VL": "Vial", "PC": "Piece", "PAC": "Pack", "RL": "Roll", "TUB": "Tube", "BOX": "Box", "BOT": "Bottle", "PR": "Pair", "PAD": "Pad", "VSET": "Set" };
   const resultsContainer = document.getElementById('resultsContainer');
-  const footerContainer = document.getElementById('auditFooter');
 
   window.onload = function() {
     renderInspectorChecklist('Combined');
@@ -392,8 +411,8 @@
       <div class="inspector-header-panel">
         <div class="controls-row">
           <div>
-            <h2 style="margin:0; color:#333;">Smart Audit Checklist</h2>
-            <p style="margin:5px 0 0; color:#666; font-size:14px;">Total costs calculate automatically when QTY is entered.</p>
+            <h2 style="margin:0; color:#333;">Floor stock Inspector Audit Checklist</h2>
+            <p style="margin:5px 0 0; color:#666; font-size:14px;">Use the ➕ button to split items with multiple expiry dates.</p>
           </div>
           <div style="display: flex; gap: 10px; align-items: center;">
             <select id="cartSelector" onchange="renderInspectorChecklist(this.value)" style="padding: 10px; border-radius: 6px; border: 2px solid #1a365d; font-size: 16px; font-weight: bold;">
@@ -401,15 +420,24 @@
               <option value="Adult" ${selectedCart === 'Adult' ? 'selected' : ''}>Adult E-Cart</option>
               <option value="Neonatal" ${selectedCart === 'Neonatal' ? 'selected' : ''}>Neonatal E-Cart</option>
             </select>
-            <button class="btn btn-export" onclick="exportToCSV('${selectedCart}')">📥 Export to Excel</button>
+            <button class="btn btn-export" onclick="exportToCSV('${selectedCart}')">📥 Download</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
           </div>
+        </div>
+
+        <div class="legend-row">
+          <div class="legend-item" style="background: #FF00FF; color: #fff;">NOT TURNED IN</div>
+          <div class="legend-item" style="background: #FFA500; color: #000;">LACKING</div>
+          <div class="legend-item" style="background: #00FF00; color: #000;">FOR TURN IN</div>
+          <div class="legend-item" style="background: #8A2BE2; color: #fff;">UNLABELLED / NO EXPIRY DATE / NO BUD STICKER</div>
+          <div class="legend-item" style="background: #6AA84F; color: #fff;">DAMAGED</div>
+          <div class="legend-item" style="background: #FF0000; color: #fff;">EXPIRED</div>
+          <div class="legend-item" style="background: #FFFF00; color: #000;">EXCESS</div>
         </div>
       </div>
     `;
 
     const cartItems = inventory.filter(item => item.cartQty && item.cartQty[selectedCart]);
-    
     const groupedByDrawer = cartItems.reduce((acc, item) => {
       let drawerName = item.drawer || "Unassigned Items";
       if (!acc[drawerName]) acc[drawerName] = [];
@@ -425,15 +453,17 @@
         <div class="inspector-drawer-title">📁 ${drawer}</div>
         <table class="inspector-table" id="table-${drawer.replace(/\s+/g, '-')}">
           <tr>
-            <th style="width: 140px;">Audit Status</th>
-            <th style="width: 60px; text-align: center;">Exp Qty</th>
-            <th style="width: 70px; text-align: center;">Act Qty</th>
-            <th style="width: 85px;">Unit Cost</th>
-            <th style="width: 95px;">Total Cost</th>
-            <th style="width: 120px;">Expiry Date</th>
+            <th style="width: 155px;">Audit Status</th>
+            <th style="width: 55px; text-align: center;">Exp Qty</th>
+            <th style="width: 65px; text-align: center;">Act Qty</th>
+            <th style="width: 75px;">Unit Cost</th>
+            <th style="width: 85px;">Total Cost</th>
+            <th style="width: 115px;">Expiry Date</th>
             <th>Item Code</th>
             <th>Description</th>
             <th>UOM</th>
+            <th style="width: 130px;">Remarks</th>
+            <th style="width: 40px; text-align: center;">Split</th>
           </tr>
       `;
       items.forEach(item => {
@@ -445,19 +475,19 @@
           <tr class="row-present data-row" data-expected="${expectedQty}" data-cost="${unitCost}">
             <td>
               <select class="status-select" onchange="manualColorOverride(this)">
-                <option value="Present">✅ Present</option>
-                <option value="Lacking">❌ Lacking</option>
-                <option value="Expired">⚠️ Expired</option>
-                <option value="Damaged">🛠️ Damaged</option>
-                <option value="For Turn In">📥 For Turn In</option>
-                <option value="Not Able to Turn In">⛔ Not Able</option>
-                <option value="Unlabelled">🏷️ Unlabelled</option>
-                <option value="Excess">➕ Excess</option>
+                <option value="Present">✅ PRESENT</option>
+                <option value="Lacking">🟧 LACKING</option>
+                <option value="Expired">🟥 EXPIRED</option>
+                <option value="Damaged">🟩 DAMAGED</option>
+                <option value="For Turn In">🟩 FOR TURN IN</option>
+                <option value="Not Turned In">🟪 NOT TURNED IN</option>
+                <option value="Unlabelled">🟪 UNLABELLED</option>
+                <option value="Excess">🟨 EXCESS</option>
               </select>
             </td>
             <td style="text-align: center;"><span class="expected-qty-badge">${expectedQty}</span></td>
             <td style="text-align: center;">
-              <input type="number" class="input-field qty-input" min="0" placeholder="Qty" style="width: 50px;" oninput="autoCalculateStatus(this)">
+              <input type="number" class="input-field qty-input" min="0" placeholder="Qty" style="width: 45px;" oninput="autoCalculateStatus(this)">
             </td>
             <td style="color: #666;">₱${unitCost}</td>
             <td class="total-cost-cell" style="font-weight: bold; color: #1a365d;">₱0.00</td>
@@ -467,6 +497,12 @@
             <td class="code-cell"><strong>${item.code}</strong></td>
             <td class="desc-cell">${item.desc}</td>
             <td class="uom-cell">${fullUomName}</td>
+            <td>
+              <input type="text" class="input-field remarks-input" placeholder="Add remark..." style="width: 120px;">
+            </td>
+            <td style="text-align: center;">
+              <button class="btn-split" onclick="splitRow(this)" title="Split for different expiry date">➕</button>
+            </td>
           </tr>
         `;
       });
@@ -475,6 +511,27 @@
 
     resultsContainer.innerHTML = html;
     document.getElementById('auditFooter').style.display = 'block';
+  }
+
+  // --- SPLIT ROW FUNCTION ---
+  function splitRow(button) {
+    const row = button.closest('tr');
+    const newRow = row.cloneNode(true);
+    
+    // Reset values in the new row
+    newRow.querySelector('.qty-input').value = '';
+    newRow.querySelector('.expiry-input').value = '';
+    newRow.querySelector('.remarks-input').value = '';
+    newRow.querySelector('.total-cost-cell').innerText = '₱0.00';
+    newRow.querySelector('.status-select').value = 'Present';
+    manualColorOverride(newRow.querySelector('.status-select'));
+    
+    // Set Expected QTY to 0 so it doesn't inflate requirements
+    newRow.dataset.expected = "0";
+    newRow.querySelector('.expected-qty-badge').innerText = "0";
+    newRow.querySelector('.expected-qty-badge').style.backgroundColor = "#fff3cd"; // Highlight it so they know it's a split row
+    
+    row.parentNode.insertBefore(newRow, row.nextSibling);
   }
 
   function autoCalculateStatus(element) {
@@ -490,7 +547,7 @@
     totalCostCell.innerText = "₱" + (unitCost * actualQty).toFixed(2);
     
     const currentStatus = select.value;
-    if (["Damaged", "For Turn In", "Not Able to Turn In", "Unlabelled"].includes(currentStatus) && element.classList.contains('qty-input')) {
+    if (["Damaged", "For Turn In", "Not Turned In", "Unlabelled"].includes(currentStatus) && element.classList.contains('qty-input')) {
       return; 
     }
 
@@ -520,14 +577,14 @@
   function manualColorOverride(selectElement) {
     const tr = selectElement.closest('tr');
     const status = selectElement.value;
-    tr.classList.remove('row-present', 'row-lacking', 'row-expired', 'row-damaged', 'row-turnin', 'row-notable', 'row-unlabelled', 'row-excess');
+    tr.classList.remove('row-present', 'row-lacking', 'row-expired', 'row-damaged', 'row-turnin', 'row-not-turned', 'row-unlabelled', 'row-excess');
     
     if (status === 'Present') tr.classList.add('row-present');
     if (status === 'Lacking') tr.classList.add('row-lacking');
     if (status === 'Expired') tr.classList.add('row-expired');
     if (status === 'Damaged') tr.classList.add('row-damaged');
     if (status === 'For Turn In') tr.classList.add('row-turnin');
-    if (status === 'Not Able to Turn In') tr.classList.add('row-notable');
+    if (status === 'Not Turned In') tr.classList.add('row-not-turned');
     if (status === 'Unlabelled') tr.classList.add('row-unlabelled');
     if (status === 'Excess') tr.classList.add('row-excess');
   }
@@ -539,7 +596,7 @@
     const time = new Date().toLocaleTimeString();
     
     csvContent += `E-Cart Audit Report\nCart Type: ${cartType}\nDate: ${date} ${time}\n\n`;
-    csvContent += "Drawer,Audit Status,Expected QTY,Actual QTY,Unit Cost,Total Cost,Expiry Date,Item Code,Description,UOM\n";
+    csvContent += "Drawer,Audit Status,Expected QTY,Actual QTY,Unit Cost,Total Cost,Expiry Date,Item Code,Description,UOM,Remarks\n";
 
     rows.forEach(row => {
       const drawerTitle = row.closest('table').previousElementSibling.innerText.replace('📁 ', '');
@@ -552,8 +609,9 @@
       const code = row.querySelector('.code-cell').innerText;
       const desc = `"${row.querySelector('.desc-cell').innerText}"`; 
       const uom = row.querySelector('.uom-cell').innerText;
+      const remarks = `"${row.querySelector('.remarks-input').value.replace(/"/g, '""')}"`;
 
-      csvContent += `${drawerTitle},${status},${expectedQty},${actualQty},₱${unitCost},₱${totalCost},${expiry},${code},${desc},${uom}\n`;
+      csvContent += `${drawerTitle},${status},${expectedQty},${actualQty},₱${unitCost},₱${totalCost},${expiry},${code},${desc},${uom},${remarks}\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
