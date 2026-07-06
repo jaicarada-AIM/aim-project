@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.I.M. | E-Cart Inspector Audit</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
+  body { 
+    font-family: Arial, sans-serif; 
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+  }
+
+  .header-container {
+    background-color: #1a365d;
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+  .banner-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 45px; 
+    margin: 0;
+    letter-spacing: 2px;
+  }
+
+  .banner-subtitle {
+    font-size: 20px; 
+    color: #4da6ff; 
+    margin-top: 5px;
+  }
+
+  #resultsContainer {
+    padding: 20px;
+  }
+
+  /* --- INSPECTOR PANEL & LEGEND --- */
+  .inspector-header-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 0 auto 20px auto;
+    max-width: 1000px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .legend-row {
+    display: flex;
+    gap: 15px;
+    font-size: 13px;
+    font-weight: bold;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+
+  .legend-item {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  /* --- STATUS COLORS --- */
+  .row-good { background-color: #ffffff; }
+  .row-missing { background-color: #f8d7da !important; color: #721c24; }
+  .row-expired { background-color: #fff3cd !important; color: #856404; }
+  .row-damaged { background-color: #e2e3e5 !important; color: #383d41; }
+
+  /* --- TABLE STYLES --- */
+  .inspector-drawer-title {
+    background-color: #4da6ff;
+    color: white;
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 8px 8px 0 0;
+    font-weight: bold;
+    font-size: 16px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .inspector-table {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 20px auto;
+    background: white;
+    border-collapse: collapse;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .inspector-table th, .inspector-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+
+  .inspector-table th { background-color: #ee4d2d; color: white; font-weight: bold; }
+  .inspector-table tr:hover { opacity: 0.95; }
+  
+  .status-select {
+    padding: 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 120px;
+  }
+
+  .btn {
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    color: white;
+    transition: 0.2s;
+  }
+  .btn-print { background-color: #007bff; }
+  .btn-print:hover { background-color: #0056b3; }
+  .btn-export { background-color: #28a745; }
+  .btn-export:hover { background-color: #1e7e34; }
+
+  /* --- PRINT STYLES --- */
+  @media print {
+    body { background: white !important; }
+    .header-container, .btn, .legend-row { display: none !important; }
+    .inspector-header-panel { box-shadow: none; border: 1px solid #000; }
+    .inspector-table, .inspector-drawer-title { box-shadow: none; border: 1px solid #000; page-break-inside: avoid; }
+    .inspector-table th { color: black !important; background-color: #f1f1f1 !important; border: 1px solid #000; }
+    .inspector-table td { border: 1px solid #000; }
+  }
+</style>
+</head>
+<body>
+
+<div id="mainApp">
+  <div class="header-container">
+    <h1 class="banner-title">A.I.M. AUDIT</h1>
+    <span class="banner-subtitle">Official Inspector Mode</span>
+  </div>
+
+  <div id="resultsContainer"></div>
+</div>
+
+<script>
+  // --- INVENTORY DATABASE (PHASE 2 STRUCTURE) ---
+  const inventory = [
+    // SAMPLE DRAWER 1 (MEDICATIONS)
+    { code: "42964311", desc: "ATROPINE (HIZON) 1 MG/1 ML AMP", uom: "AMP", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    { code: "44000038", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML AMP", uom: "AMP", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "48840022", desc: "CALCIUM GLUCONATE (EURO-MED) 10%", uom: "VL", cart: ["Combined", "Neonatal"], drawer: "Drawer 1 - Medications" },
+    { code: "43817013", desc: "LIDOCAINE 2% (ELIN) 1,000 MG/50 ML", uom: "VL", cart: ["Combined", "Adult"], drawer: "Drawer 1 - Medications" },
+    
+    // SAMPLE DRAWER 2 (AIRWAY)
+    { code: "80200008", desc: "AIRWAY NASAL SIZE 7.0 FR. 28", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 2 - Airway" },
+    { code: "80200010", desc: "AIRWAY NASAL SIZE 7.5 FR. 30", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 2 - Airway" },
+    { code: "86000143", desc: "ENDO TUBE STANDARD SIZE 2.0", uom: "PC", cart: ["Combined", "Neonatal"], drawer: "Drawer 2 - Airway" },
+    
+    // SAMPLE DRAWER 3 (IV SUPPLIES)
+    { code: "83900200", desc: "IV CATH AUTOGUARD G-18", uom: "PC", cart: ["Combined", "Adult"], drawer: "Drawer 3 - IV Supplies" },
+    { code: "83900204", desc: "IV CATH AUTOGUARD G-22", uom: "PC", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 3 - IV Supplies" },
+    { code: "85701002", desc: "SYRINGE 5CC W/ NEEDLE LUER LOCK", uom: "PC", cart: ["Combined", "Adult", "Neonatal"], drawer: "Drawer 3 - IV Supplies" }
+  ];
+
+  const uomDictionary = { "AMP": "Ampoule", "VL": "Vial", "PC": "Piece", "PAC": "Pack", "RL": "Roll", "TUB": "Tube", "BOX": "Box", "BOT": "Bottle", "PR": "Pair", "PAD": "Pad", "VSET": "Set" };
+  const resultsContainer = document.getElementById('resultsContainer');
+
+  // Load Combined Cart on startup
+  window.onload = function() {
+    renderInspectorChecklist('Combined');
+  };
+
+  function renderInspectorChecklist(selectedCart) {
+    let html = `
+      <div class="inspector-header-panel">
+        <div class="controls-row">
+          <div>
+            <h2 style="margin:0; color:#333;">Audit Checklist</h2>
+            <p style="margin:5px 0 0; color:#666; font-size:14px;">Update item status. Colors will change automatically.</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="cartSelector" onchange="renderInspectorChecklist(this.value)" style="padding: 10px; border-radius: 6px; border: 2px solid #1a365d; font-size: 16px; font-weight: bold;">
+              <option value="Combined" ${selectedCart === 'Combined' ? 'selected' : ''}>Combined E-Cart (57 Units)</option>
+              <option value="Adult" ${selectedCart === 'Adult' ? 'selected' : ''}>Adult E-Cart (14 Units)</option>
+              <option value="Neonatal" ${selectedCart === 'Neonatal' ? 'selected' : ''}>Neonatal E-Cart (3 Units)</option>
+            </select>
+            <button class="btn btn-export" onclick="exportToCSV('${selectedCart}')">📥 Export to Excel</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
+          </div>
+        </div>
+        
+        <div class="legend-row">
+          <div class="legend-item" style="background: #ffffff;">✅ Good / Present</div>
+          <div class="legend-item" style="background: #f8d7da; color: #721c24;">❌ Missing / OOS</div>
+          <div class="legend-item" style="background: #fff3cd; color: #856404;">⚠️ Expired</div>
+          <div class="legend-item" style="background: #e2e3e5; color: #383d41;">🛠️ Damaged</div>
+        </div>
+      </div>
+    `;
+
+    // Filter items based on selected cart type
+    const cartItems = inventory.filter(item => item.cart && item.cart.includes(selectedCart) && !item.isAlt);
+
+    // Group items by Drawer
+    const groupedByDrawer = cartItems.reduce((acc, item) => {
+      let drawerName = item.drawer || "Unassigned Items";
+      if (!acc[drawerName]) acc[drawerName] = [];
+      acc[drawerName].push(item);
+      return acc;
+    }, {});
+
+    // Generate a table for each Drawer
+    for (const [drawer, items] of Object.entries(groupedByDrawer)) {
+      html += `
+        <div class="inspector-drawer-title">📁 ${drawer}</div>
+        <table class="inspector-table" id="table-${drawer.replace(/\s+/g, '-')}">
+          <tr>
+            <th style="width: 130px;">Status</th>
+            <th>Item Code</th>
+            <th>Description</th>
+            <th>UOM</th>
+          </tr>
+      `;
+      items.forEach(item => {
+        const fullUomName = uomDictionary[item.uom] || item.uom;
+        html += `
+          <tr class="row-good data-row">
+            <td>
+              <select class="status-select" onchange="updateRowColor(this)">
+                <option value="Good">✅ Good</option>
+                <option value="Missing">❌ Missing</option>
+                <option value="Expired">⚠️ Expired</option>
+                <option value="Damaged">🛠️ Damaged</option>
+              </select>
+            </td>
+            <td class="code-cell"><strong>${item.code}</strong></td>
+            <td class="desc-cell">${item.desc}</td>
+            <td class="uom-cell">${fullUomName}</td>
+          </tr>
+        `;
+      });
+      html += '</table>';
+    }
+
+    resultsContainer.innerHTML = html;
+  }
+
+  // --- CHANGE ROW COLOR BASED ON DROPDOWN SELECTION ---
+  function updateRowColor(selectElement) {
+    const tr = selectElement.closest('tr');
+    const status = selectElement.value;
+    
+    // Remove all previous status classes
+    tr.classList.remove('row-good', 'row-missing', 'row-expired', 'row-damaged');
+    
+    // Add the new status class
+    if (status === 'Good') tr.classList.add('row-good');
+    if (status === 'Missing') tr.classList.add('row-missing');
+    if (status === 'Expired') tr.classList.add('row-expired');
+    if (status === 'Damaged') tr.classList.add('row-damaged');
+  }
+
+  // --- EXPORT TO EXCEL (CSV) FUNCTION ---
+  function exportToCSV(cartType) {
+    const rows = document.querySelectorAll('.data-row');
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // Add Header Information
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
+    csvContent += `E-Cart Audit Report\nCart Type: ${cartType}\nDate: ${date} ${time}\n\n`;
+    csvContent += "Drawer,Status,Item Code,Description,UOM\n";
+
+    // Grab data from the DOM
+    rows.forEach(row => {
+      const drawerTitle = row.closest('table').previousElementSibling.innerText.replace('📁 ', '');
+      const status = row.querySelector('.status-select').value;
+      const code = row.querySelector('.code-cell').innerText;
+      // Wrap description in quotes to prevent commas from breaking columns in Excel
+      const desc = `"${row.querySelector('.desc-cell').innerText}"`; 
+      const uom = row.querySelector('.uom-cell').innerText;
+
+      csvContent += `${drawerTitle},${status},${code},${desc},${uom}\n`;
+    });
+
+    // Create a hidden download link and trigger it
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Audit_${cartType}_${date.replace(/\//g, '-')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+</body>
+</html>
