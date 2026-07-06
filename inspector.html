@@ -61,7 +61,7 @@
     .inspector-table th { color: black !important; background-color: #f1f1f1 !important; border: 1px solid #000; }
     .inspector-table td { border: 1px solid #000; }
     input, select { border: none; background: transparent; appearance: none; -webkit-appearance: none; font-weight: bold;}
-    .audit-footer { display: block !important; page-break-inside: avoid; } /* Forces footer to show when printing */
+    .audit-footer { display: block !important; page-break-inside: avoid; } 
   }
 </style>
 </head>
@@ -101,18 +101,20 @@
 </div>
 
 <script>
-  // --- INVENTORY DATABASE (UPDATED WITH CART-SPECIFIC QTY AND UNIT COST) ---
+  // --- A.I.M. MASTER INVENTORY DATABASE (COMBINED, ADULT, NEONATAL) ---
   const inventory = [
-    // --- FIRST DRAWER: MEDICATIONS ---
+    // --- DRAWER 1 (MEDICATIONS) ---
     { code: "42964311", desc: "ATROPINE (HIZON) 1 MG/1 ML AMP", cost: 82.60, uom: "AMP", cartQty: { "Combined": 5, "Adult": 5, "Neonatal": 2 }, drawer: "Drawer 1 - Medications" },
     { code: "42422511", desc: "ISOKET 10 MG/10 ML (1MG/ML) AMP", cost: 408.00, uom: "AMP", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 1 - Medications" },
     { code: "44004351", desc: "NSS (EURO-MED) 50 ML VIAL", cost: 33.47, uom: "VL", cartQty: { "Combined": 2, "Adult": 2, "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
-    { code: "44000038", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML", cost: 200.00, uom: "AMP", cartQty: { "Combined": 3, "Adult": 3, "Neonatal": 9 }, drawer: "Drawer 1 - Medications" },
+    { code: "44000038", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML", cost: 200.00, uom: "AMP", cartQty: { "Combined": 3 }, drawer: "Drawer 1 - Medications" },
+    { code: "44006039", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML", cost: 126.45, uom: "VL", cartQty: { "Adult": 3, "Neonatal": 9 }, drawer: "Drawer 1 - Medications" },
     { code: "48840022", desc: "CALCIUM GLUCONATE (EURO-MED) 10%", cost: 26.18, uom: "VL", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 2 }, drawer: "Drawer 1 - Medications" },
     { code: "42410008", desc: "CORDARONE 150 MG/3 ML (50 MG/ML) AMP", cost: 376.22, uom: "AMP", cartQty: { "Combined": 3, "Adult": 3 }, drawer: "Drawer 1 - Medications" },
     { code: "44005141", desc: "DEXTROSE 50% (EURO-MED) 50 ML VIAL", cost: 45.50, uom: "VL", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 2 }, drawer: "Drawer 1 - Medications" },
     { code: "42460044", desc: "DOBUzef 250 MG/5 ML (50 MG/ML) AMP", cost: 450.14, uom: "AMP", cartQty: { "Combined": 3, "Adult": 3, "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
-    { code: "42410050", desc: "DOPamax 200MG/5ML(40MG/ML) AMP 5'S", cost: 170.52, uom: "AMP", cartQty: { "Combined": 3, "Adult": 3, "Neonatal": 2 }, drawer: "Drawer 1 - Medications" },
+    { code: "42410050", desc: "DOPamax 200MG/5ML(40MG/ML) AMP 5'S", cost: 170.52, uom: "AMP", cartQty: { "Combined": 3 }, drawer: "Drawer 1 - Medications" },
+    { code: "42460046", desc: "DOPamax 200MG/5ML(40MG/ML) AMP 5'S", cost: 117.16, uom: "AMP", cartQty: { "Adult": 3, "Neonatal": 2 }, drawer: "Drawer 1 - Medications" },
     { code: "42410030", desc: "ADRENALINE (EPINEPHrine) 1MG/ML", cost: 100.96, uom: "AMP", cartQty: { "Combined": 20, "Adult": 20, "Neonatal": 10 }, drawer: "Drawer 1 - Medications" },
     { code: "42460021", desc: "LEVOPHED SF 4 MG/4 ML (1 MG/ML) AMP", cost: 690.28, uom: "AMP", cartQty: { "Combined": 4, "Adult": 4 }, drawer: "Drawer 1 - Medications" },
     { code: "43817013", desc: "LIDOCAINE 2% (ELIN) 1,000 MG/50 ML", cost: 199.26, uom: "VL", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 1 - Medications" },
@@ -120,15 +122,261 @@
     { code: "42870004", desc: "DORMICUM 5 MG/1 ML AMP", cost: 96.95, uom: "AMP", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
     { code: "42851614", desc: "VaLIUM 10 MG/2 ML (5 MG/ML) AMP", cost: 81.41, uom: "AMP", cartQty: { "Combined": 3, "Adult": 3, "Neonatal": 6 }, drawer: "Drawer 1 - Medications" },
     { code: "49798562", desc: "AMINOSOL 250MG/10ML AMP", cost: 17.44, uom: "AMP", cartQty: { "Neonatal": 3 }, drawer: "Drawer 1 - Medications" },
+    { code: "42452010", desc: "LASIX 20MG AMP", cost: 206.43, uom: "AMP", cartQty: { "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
     { code: "46832414", desc: "Solu-CORTEF 100MG A-O-V VIAL", cost: 329.46, uom: "VL", cartQty: { "Neonatal": 3 }, drawer: "Drawer 1 - Medications" },
     { code: "42894339", desc: "KEPPRA 100MG/ML X 5ML VIAL", cost: 2896.59, uom: "VL", cartQty: { "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
-    
+    { code: "43010032", desc: "NALOCURE 400MCG VIAL", cost: 1015.20, uom: "VL", cartQty: { "Neonatal": 2 }, drawer: "Drawer 1 - Medications" },
+    { code: "44004350", desc: "STERILE WATER 50ML FOR INJ.", cost: 29.33, uom: "VL", cartQty: { "Neonatal": 3 }, drawer: "Drawer 1 - Medications" },
+    { code: "42824897", desc: "MORPHINE SULFATE (DBL) 10MG AMP", cost: 85.44, uom: "AMP", cartQty: { "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
+    { code: "43817009", desc: "XYLOCAINE 10% PUMP SPRAY 50ML (Dr 1)", cost: 2725.92, uom: "BOT", cartQty: { "Neonatal": 1 }, drawer: "Drawer 1 - Medications" },
+
+    // --- DRAWER 2 ---
+    { code: "80200008", desc: "AIRWAY NASAL SIZE 7.0 FR. 28", cost: 473.67, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "80200010", desc: "AIRWAY NASAL SIZE 7.5 FR. 30", cost: 139.43, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "80200012", desc: "AIRWAY ORAL SIZE 1.0 BLUE", cost: 85.45, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "80200000", desc: "AIRWAY ORAL SIZE 2.0 BLACK", cost: 85.45, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "83401012", desc: "ANESTHESIA MASK SIZE 1 NEONATE", cost: 500.00, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "83401007", desc: "ANESTHESIA MASK SIZE 2 INFANT", cost: 499.99, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "83401013", desc: "ANESTHESIA MASK SIZE 3 TODDLER", cost: 499.99, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "81800026", desc: "CATHETER SUCTION FR. 10 X 51CM", cost: 27.82, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "81801032", desc: "CATHETER SUCTION FR. 5 X 50CM", cost: 27.83, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "81800012", desc: "CATHETER SUCTION FR. 8 X 53CM", cost: 34.43, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "82700095", desc: "ECG ELECTRODES PEDIA 25/PAC", cost: 44.36, uom: "PC", cartQty: { "Combined": 10, "Neonatal": 3 }, drawer: "Drawer 2" },
+    { code: "86000143", desc: "ENDO TUBE STANDARD SIZE 2.0", cost: 151.49, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86000051", desc: "ENDO TUBE STANDARD SIZE 2.5", cost: 166.82, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86000144", desc: "ENDO TUBE STANDARD SIZE 3.0", cost: 330.66, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86000042", desc: "ENDO TUBE STANDARD SIZE 4.0", cost: 317.20, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86001033", desc: "ENDO TUBE STANDARD SIZE 4.5", cost: 311.81, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86000091", desc: "ENDO TUBE STANDARD SIZE 5.0", cost: 339.44, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86001028", desc: "ENDO TUBE STANDARD SIZE 5.5", cost: 346.03, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 2" },
+    { code: "86000004", desc: "FEEDING TUBE FR. 5 X 40CM", cost: 16.10, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "86000003", desc: "FEEDING TUBE FR. 8 X 40CM", cost: 16.00, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "86000010", desc: "INTUBATING STYLET PEDIA", cost: 375.67, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "81400008", desc: "NASAL OXYGEN CANNULA PEDIA", cost: 39.70, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "83400005", desc: "OXYGEN MASK PEDIA W/ RESERVOIR BAG", cost: 97.90, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "84700002", desc: "PLASTER LEUKOPLAST 2\" X 5 METERS", cost: 339.35, uom: "RL", cartQty: { "Combined": 1 }, drawer: "Drawer 2" },
+    { code: "48459921", desc: "BD ALCOHOL SWAB 70% ALCOHOL WIPES 100'S", cost: 1.53, uom: "PC", cartQty: { "Adult": 20, "Neonatal": 10 }, drawer: "Drawer 2" },
+    { code: "84701019", desc: "POVIDONE-IODINE PREP PAD", cost: 2.40, uom: "PC", cartQty: { "Neonatal": 10 }, drawer: "Drawer 2" },
+    { code: "83300014", desc: "CLAVE TRI-FUSE EXTENSION SET", cost: 344.49, uom: "PC", cartQty: { "Adult": 2, "Neonatal": 3 }, drawer: "Drawer 2" },
+    { code: "83300022", desc: "CLAVE BI-FUSE EXTENSION SET", cost: 301.59, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 2" },
+    { code: "82300001", desc: "COTTON BALLS STERILE 6'S", cost: 5.23, uom: "PAC", cartQty: { "Adult": 5, "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "82700096", desc: "2560 ELECTRODES ADULT RED DOT 50/PAC", cost: 21.00, uom: "PC", cartQty: { "Adult": 10 }, drawer: "Drawer 2" },
+    { code: "84300048", desc: "ECG PAPER DEFIBRILLATOR - PHILIPS", cost: 10.00, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 2" },
+    { code: "83900134", desc: "I.V. START PACK", cost: 75.00, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 2" },
+    { code: "86701092", desc: "INFUSION PUMP SET 2-CLAVE", cost: 418.39, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 2" },
+    { code: "83900200", desc: "IV CATH AUTOGUARD G-18", cost: 104.28, uom: "PC", cartQty: { "Adult": 5 }, drawer: "Drawer 2" },
+    { code: "83900202", desc: "IV CATH AUTOGUARD G-20", cost: 104.27, uom: "PC", cartQty: { "Adult": 5 }, drawer: "Drawer 2" },
+    { code: "83900204", desc: "IV CATH AUTOGUARD G-22", cost: 104.27, uom: "PC", cartQty: { "Adult": 5 }, drawer: "Drawer 2" },
+    { code: "83900208", desc: "IV CATH AUTOGUARD G-24", cost: 104.28, uom: "PC", cartQty: { "Adult": 5 }, drawer: "Drawer 2" },
+    { code: "83900210", desc: "IV CATHETER NEOFLON PRO G24", cost: 141.40, uom: "PC", cartQty: { "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "83900211", desc: "IV CATHETER NEOFLON PRO G26", cost: 141.44, uom: "PC", cartQty: { "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "83900206", desc: "IV CATH AUTOGUARD G-24N", cost: 130.43, uom: "PC", cartQty: { "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "84701017", desc: "TEGADERM 1624W 6CM X 7CM", cost: 27.23, uom: "PC", cartQty: { "Neonatal": 4 }, drawer: "Drawer 2" },
+    { code: "81600017", desc: "IV SPLINT FULL TERM", cost: 80.00, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "81600016", desc: "IV SPLINT PRETERM-B", cost: 70.00, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "81600015", desc: "IV SPLINT PRETERM-A", cost: 70.00, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "85000069", desc: "SUTURE SILK 2-0 W2512", cost: 200.03, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 2" },
+    { code: "85000064", desc: "SUTURE SILK 3-0 W2511", cost: 238.72, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 2" },
+    { code: "86701094", desc: "MACROSET HOSPIRA LUER-LOCK", cost: 185.75, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 2" },
+    { code: "84701004", desc: "PLASTER MICROPORE 1/2\" X 10 YARDS", cost: 19.89, uom: "RL", cartQty: { "Combined": 1, "Neonatal": 4 }, drawer: "Drawer 2" },
+    { code: "84701005", desc: "PLASTER MICROPORE 1\" X 10 YARDS", cost: 40.32, uom: "PC", cartQty: { "Adult": 1, "Neonatal": 1 }, drawer: "Drawer 2" },
+    { code: "84701006", desc: "PLASTER MICROPORE 2\" X 10 YARDS", cost: 80.92, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 2" },
+    { code: "84701010", desc: "PLASTER DURAPORE 1/2\" X 10 YARDS", cost: 68.74, uom: "RL", cartQty: { "Neonatal": 3 }, drawer: "Drawer 2" },
+    { code: "83300008", desc: "STOPCOCK 3-WAY LUER-LOCK CONNECTA BD", cost: 48.48, uom: "PC", cartQty: { "Adult": 3 }, drawer: "Drawer 2" },
+    { code: "85701018", desc: "SYRINGE 1CC TUBERCULINE W/ NEEDLE", cost: 6.53, uom: "PC", cartQty: { "Adult": 5, "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "85701001", desc: "SYRINGE 3.0CC W/ NEEDLE LUER LOCK", cost: 5.71, uom: "PC", cartQty: { "Adult": 5, "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "85701002", desc: "SYRINGE 5CC W/ NEEDLE LUER LOCK", cost: 6.15, uom: "PC", cartQty: { "Combined": 1, "Adult": 5, "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "85701003", desc: "SYRINGE 10CC W/ NEEDLE LUER LOCK (Dr 2)", cost: 8.75, uom: "PC", cartQty: { "Adult": 5, "Neonatal": 5 }, drawer: "Drawer 2" },
+    { code: "85701005", desc: "SYRINGE 30CC LUER LOCK", cost: 29.17, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 2" },
+    { code: "85701033", desc: "SYRINGE 50/60CC LUERLOCK", cost: 25.24, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 2" },
+    { code: "85701028", desc: "SYRINGE PF SALINE FLUSH 10ML UNIMEX", cost: 25.23, uom: "PC", cartQty: { "Adult": 10 }, drawer: "Drawer 2" },
+    { code: "86000250", desc: "BLOOD COLLECTION SET G-23", cost: 34.47, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "86000255", desc: "BLOOD COLLECTION SET G-25", cost: 39.15, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "83901109", desc: "NEEDLE G-19", cost: 1.89, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "83901082", desc: "NEEDLE G-23", cost: 1.90, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "83901083", desc: "NEEDLE G-25", cost: 1.90, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "80902015", desc: "SURGICAL BLADE # 21 STERILE", cost: 15.68, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "80901005", desc: "SURGICAL BLADE # 15 STERILE", cost: 15.67, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 2" },
+    { code: "81400002", desc: "WITHDRAWAL CANNULA", cost: 126.36, uom: "PC", cartQty: { "Adult": 2, "Neonatal": 2 }, drawer: "Drawer 2" },
+    { code: "84300015", desc: "LUBRISAFE LUBRICATING JELLY 10 GM", cost: 6.00, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 2" },
+
+    // --- DRAWER 3 ---
+    { code: "80200006", desc: "AIRWAY NASAL SIZE 6.0 FR. 24", cost: 269.33, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 3" },
+    { code: "80200001", desc: "AIRWAY ORAL SIZE 3.0 WHITE", cost: 85.12, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 3" },
+    { code: "80200002", desc: "AIRWAY ORAL SIZE 4.0 GREEN", cost: 84.99, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 3" },
+    { code: "80200003", desc: "AIRWAY ORAL SIZE 5.0 YELLOW", cost: 85.45, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 3" },
+    { code: "86000164", desc: "BOUGIE ADULT - SEDASENZ", cost: 247.69, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 3" },
+    { code: "81800027", desc: "CATHETER SUCTION FR. 12 X 51CM", cost: 27.82, uom: "PC", cartQty: { "Combined": 4 }, drawer: "Drawer 3" },
+    { code: "81800028", desc: "CATHETER SUCTION FR. 14 X 51CM", cost: 27.85, uom: "PC", cartQty: { "Combined": 4 }, drawer: "Drawer 3" },
+    { code: "81800133", desc: "CATHETER SUCTION FR. 16 X 53CM", cost: 28.14, uom: "PC", cartQty: { "Combined": 4 }, drawer: "Drawer 3" },
+    { code: "86000027", desc: "ENDO TUBE STANDARD SIZE 6.0", cost: 355.00, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 3" },
+    { code: "86000145", desc: "ENDO TUBE STANDARD SIZE 6.5", cost: 337.20, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 3" },
+    { code: "86000028", desc: "ENDO TUBE STANDARD SIZE 7.0", cost: 327.27, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 3" },
+    { code: "86000147", desc: "ENDO TUBE STANDARD SIZE 7.5", cost: 327.03, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 3" },
+    { code: "86000012", desc: "INTUBATING STYLET ADULT", cost: 188.32, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 3" },
+    { code: "85701003", desc: "SYRINGE 10CC W/ NEEDLE LUER LOCK (Dr 3)", cost: 8.75, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 3" },
+    { code: "84300020", desc: "ELECTRODE GEL 8.5OZ", cost: 309.00, uom: "TUB", cartQty: { "Adult": 1 }, drawer: "Drawer 3" },
+    { code: "83300013", desc: "EXTENSION TUBING 140CM LUER-LOCK", cost: 73.43, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 3" },
+    { code: "86000024", desc: "PERFUSOR EXTENSION LINE 150CM", cost: 105.27, uom: "PC", cartQty: { "Neonatal": 6 }, drawer: "Drawer 3" },
+    { code: "83401056", desc: "FACE MASK EARLOOP 3-PLY 50/BOX", cost: 0.86, uom: "PC", cartQty: { "Adult": 50 }, drawer: "Drawer 3" },
+    { code: "83900210", desc: "IV CATHETER NEOFLON PRO G24 #391380", cost: 141.40, uom: "PC", cartQty: { "Adult": 5 }, drawer: "Drawer 3" },
+    { code: "86000006", desc: "NGT FR. 14 X 125CM", cost: 51.21, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 3" },
+    { code: "86000007", desc: "NGT FR. 16 X 125CM", cost: 53.67, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 3" },
+    { code: "85701033", desc: "SYRINGE 50/60CC LUERLOCK (Dr 3)", cost: 25.24, uom: "PC", cartQty: { "Neonatal": 5 }, drawer: "Drawer 3" },
+    { code: "83300008", desc: "STOPCOCK 3-WAY LUER-LOCK CONNECTA BD (Dr 3)", cost: 48.48, uom: "PC", cartQty: { "Neonatal": 4 }, drawer: "Drawer 3" },
+
+    // --- DRAWER 4 ---
+    { code: "48459921", desc: "BD ALCOHOL SWAB 70% ALCOHOL WIPES", cost: 1.53, uom: "PC", cartQty: { "Combined": 20 }, drawer: "Drawer 4" },
+    { code: "83300014", desc: "CLAVE TRI-FUSE EXTENSION SET", cost: 344.49, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "82300001", desc: "COTTON BALLS STERILE 6'S", cost: 5.23, uom: "PAC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "83300013", desc: "EXTENSION TUBING 140CM LUER-LOCK", cost: 73.43, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 4" },
+    { code: "83900210", desc: "IV CATHETER NEOFLON PRO G24", cost: 141.40, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "83900211", desc: "IV CATHETER NEOFLON PRO G26", cost: 141.44, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "83900134", desc: "I.V. START PACK", cost: 75.00, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "86701092", desc: "INFUSION PUMP SET 2-CLAVE", cost: 418.39, uom: "PC", cartQty: { "Combined": 2, "Neonatal": 2 }, drawer: "Drawer 4" },
+    { code: "83900200", desc: "IV CATH AUTOGUARD G-18", cost: 104.28, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "83900202", desc: "IV CATH AUTOGUARD G-20", cost: 104.27, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "83900204", desc: "IV CATH AUTOGUARD G-22", cost: 104.27, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "83900208", desc: "IV CATH AUTOGUARD G-24", cost: 104.28, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "86701094", desc: "MACROSET HOSPIRA LUER-LOCK", cost: 185.75, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "84701005", desc: "PLASTER MICROPORE 1\" X 10 YARDS", cost: 40.32, uom: "RL", cartQty: { "Combined": 1 }, drawer: "Drawer 4" },
+    { code: "84701006", desc: "PLASTER MICROPORE 2\" X 10 YARDS", cost: 80.92, uom: "RL", cartQty: { "Combined": 1 }, drawer: "Drawer 4" },
+    { code: "83300008", desc: "STOPCOCK 3-WAY LUER-LOCK CONNECTA BD", cost: 48.48, uom: "PC", cartQty: { "Combined": 3 }, drawer: "Drawer 4" },
+    { code: "85701003", desc: "SYRINGE 10CC W/ NEEDLE LUER LOCK (Dr 4)", cost: 8.75, uom: "PC", cartQty: { "Combined": 4 }, drawer: "Drawer 4" },
+    { code: "85701018", desc: "SYRINGE 1CC TUBERCULINE W/ NEEDLE", cost: 6.53, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "85701001", desc: "SYRINGE 3.0CC W/ NEEDLE LUER LOCK", cost: 5.71, uom: "PC", cartQty: { "Combined": 5 }, drawer: "Drawer 4" },
+    { code: "85701005", desc: "SYRINGE 30CC LUER LOCK", cost: 29.17, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "85701033", desc: "SYRINGE 50/60CC LUERLOCK", cost: 25.24, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "85701002", desc: "SYRINGE 5CC W/ NEEDLE LUER LOCK (Dr 4)", cost: 6.15, uom: "PC", cartQty: { "Combined": 4 }, drawer: "Drawer 4" },
+    { code: "85701028", desc: "SYRINGE PF SALINE FLUSH 10ML UNIMEX", cost: 25.23, uom: "PC", cartQty: { "Combined": 10 }, drawer: "Drawer 4" },
+    { code: "86000250", desc: "BLOOD COLLECTION SET w/ lock G-23", cost: 34.47, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "86000255", desc: "BLOOD COLLECTION SET G-25 VACUETTE", cost: 39.15, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "81400002", desc: "WITHDRAWAL CANNULA", cost: 126.36, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 4" },
+    { code: "86000028", desc: "ENDO TUBE STANDARD SIZE 7.0 (Dr 4)", cost: 327.27, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 4" },
+    { code: "86000147", desc: "ENDO TUBE STANDARD SIZE 7.5 (Dr 4)", cost: 327.03, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 4" },
+    { code: "82900046", desc: "GLOVES EXAM MEDIUM POWDER FREE", cost: 180.00, uom: "BOX", cartQty: { "Adult": 1 }, drawer: "Drawer 4" },
+    { code: "84300015", desc: "LUBRISAFE LUBRICATING JELLY 10 GM", cost: 6.00, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 4" },
+    { code: "85701007", desc: "SYRINGE BULB ASEPTO 50CC", cost: 42.41, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 4" },
+    { code: "44005238", desc: "D10 W 500ML (EURO)", cost: 90.47, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 4" },
+    { code: "44005383", desc: "D5 0.3% NACL 500ML (EURO)", cost: 85.09, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 4" },
+    { code: "44000029", desc: "D5 W 500ML (EURO)", cost: 84.21, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 4" },
+    { code: "44000097", desc: "EURO-ION IN D5 W 500ML (EURO)", cost: 87.94, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 4" },
+    { code: "44000095", desc: "LR 500ML (EURO)", cost: 82.78, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 4" },
+    { code: "44000122", desc: "NSS (EURO-MED) 500 ML SOL'N (Dr 4)", cost: 81.54, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 4" },
+
+    // --- DRAWER 5 ---
+    { code: "80200006", desc: "AIRWAY NASAL SIZE 6.0 FR. 24", cost: 269.33, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200008", desc: "AIRWAY NASAL SIZE 7.0 FR. 28", cost: 473.67, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200010", desc: "AIRWAY NASAL SIZE 7.5 FR. 30", cost: 139.43, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200012", desc: "AIRWAY ORAL SIZE 1.0 BLUE", cost: 85.45, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200000", desc: "AIRWAY ORAL SIZE 2.0 BLACK", cost: 85.45, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200001", desc: "AIRWAY ORAL SIZE 3.0 WHITE", cost: 85.12, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200002", desc: "AIRWAY ORAL SIZE 4.0 GREEN", cost: 84.99, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "80200003", desc: "AIRWAY ORAL SIZE 5.0 YELLOW", cost: 85.45, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "83401008", desc: "ANESTHESIA MASK SIZE 4 CHILD/SMALL ADULT", cost: 500.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "83401009", desc: "ANESTHESIA MASK SIZE 5 ADULT", cost: 364.04, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "83401020", desc: "ANESTHESIA MASK SIZE 6 LARGE ADULT", cost: 499.96, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "86000142", desc: "E.T. HOLDER ADULT", cost: 1360.48, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "82700096", desc: "2560 ELECTRODES ADULT RED DOT 50/PAC", cost: 21.00, uom: "PC", cartQty: { "Combined": 10 }, drawer: "Drawer 5" },
+    { code: "84300048", desc: "ECG PAPER DEFIBRILLATOR - PHILIPS", cost: 66.66, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "84300020", desc: "ELECTRODE GEL 8.5OZ", cost: 309.00, uom: "TUB", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "83401056", desc: "FACE MASK EARLOOP 3-PLY 50/BOX", cost: 0.86, uom: "PC", cartQty: { "Combined": 50 }, drawer: "Drawer 5" },
+    { code: "82900046", desc: "GLOVES EXAM MEDIUM POWDER FREE", cost: 180.00, uom: "BOX", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "81400001", desc: "NASAL OXYGEN CANNULA ADULT", cost: 87.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "81400008", desc: "NASAL OXYGEN CANNULA PEDIA (Dr 5)", cost: 39.70, uom: "PC", cartQty: { "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "86000005", desc: "NGT FR. 10 X 100CM", cost: 50.90, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "86000056", desc: "NGT FR. 12 X 122CM", cost: 53.81, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "86000006", desc: "NGT FR. 14 X 125CM", cost: 51.21, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "86000007", desc: "NGT FR. 16 X 125CM", cost: 53.67, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "84000014", desc: "OXYGEN CONNECTING TUBE", cost: 28.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "83400006", desc: "OXYGEN MASK ADULT W/ RESERVOIR BAG", cost: 123.97, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "86000011", desc: "SUCTION CONNECTING TUBE FR. 25 X 210CM", cost: 100.19, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 5" },
+    { code: "85701007", desc: "SYRINGE BULB ASEPTO 50CC", cost: 42.41, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 5" },
+    { code: "81800026", desc: "CATHETER SUCTION FR. 10 X 51CM (Dr 5)", cost: 27.82, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 5" },
+    { code: "81800027", desc: "CATHETER SUCTION FR. 12 X 51CM (Dr 5)", cost: 27.82, uom: "PC", cartQty: { "Adult": 4 }, drawer: "Drawer 5" },
+    { code: "81800028", desc: "CATHETER SUCTION FR. 14 X 51CM (Dr 5)", cost: 27.85, uom: "PC", cartQty: { "Adult": 4 }, drawer: "Drawer 5" },
+    { code: "81800133", desc: "CATHETER SUCTION FR. 16 X 53CM (Dr 5)", cost: 28.14, uom: "PC", cartQty: { "Adult": 4 }, drawer: "Drawer 5" },
+    { code: "81801032", desc: "CATHETER SUCTION FR. 5 X 50CM (Dr 5)", cost: 27.83, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 5" },
+    { code: "81800012", desc: "CATHETER SUCTION FR. 8 X 53CM (Dr 5)", cost: 34.43, uom: "PC", cartQty: { "Adult": 2 }, drawer: "Drawer 5" },
+    { code: "80500028", desc: "AMBUBAG NEONATE (Dr 5)", cost: 947.79, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 5" },
+    { code: "83401012", desc: "ANESTHESIA MASK SIZE 1 NEONATE", cost: 500.00, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 5" },
+    { code: "80700039", desc: "DUODERM 5CM X 20CM WOUND DRESSING", cost: 181.03, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 5" },
+    { code: "86000143", desc: "ENDO TUBE STANDARD SIZE 2.0 (Dr 5)", cost: 151.49, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 5" },
+    { code: "86000051", desc: "ENDO TUBE STANDARD SIZE 2.5 (Dr 5)", cost: 166.82, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 5" },
+    { code: "86000144", desc: "ENDO TUBE STANDARD SIZE 3.0 (Dr 5)", cost: 330.66, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 5" },
+    { code: "86000042", desc: "ENDO TUBE STANDARD SIZE 4.0 (Dr 5)", cost: 317.20, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 5" },
+    { code: "86000010", desc: "INTUBATING STYLET PEDIA", cost: 375.67, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 5" },
+    { code: "83400005", desc: "OXYGEN MASK PEDIA W/ RESERVOIR BAG", cost: 97.90, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 5" },
+    { code: "84700002", desc: "PLASTER LEUKOPLAST 2\" X 5 METERS", cost: 339.35, uom: "RL", cartQty: { "Neonatal": 1 }, drawer: "Drawer 5" },
+    { code: "82700054", desc: "PULSE OXISENSOR OXIMAX NEONATE MAX-N", cost: 540.00, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 5" },
+
+    // --- DRAWER 6 ---
+    { code: "80500026", desc: "AMBUBAG ADULT (Dr 6)", cost: 2340.19, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 6" },
+    { code: "80500028", desc: "AMBUBAG NEONATE (Dr 6)", cost: 947.79, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 6" },
+    { code: "82700210", desc: "AMBUBAG PEDIA SEBS - CRITICARE", cost: 1475.00, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 6" },
+    { code: "44006788", desc: "NSS (B. BRAUN) 100 ML SOL'N", cost: 77.80, uom: "PC", cartQty: { "Combined": 2 }, drawer: "Drawer 6" },
+    { code: "44001033", desc: "NSS (EURO-MED) 1 L SOL'N", cost: 92.02, uom: "BOT", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 6" },
+    { code: "44000122", desc: "NSS (EURO-MED) 500 ML SOL'N", cost: 81.54, uom: "PC", cartQty: { "Combined": 2, "Adult": 1 }, drawer: "Drawer 6" },
+    { code: "83700011", desc: "NSS SOLUTION FOR IRRIGATION 1 LITER", cost: 83.12, uom: "BOT", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 6" },
+    { code: "44005238", desc: "D10W (EURO-MED) 500 ML SOL'N", cost: 90.47, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 6" },
+    { code: "44010047", desc: "D5 WATER 250ML (B. BRAUN)", cost: 100.78, uom: "BOT", cartQty: { "Combined": 4, "Adult": 4 }, drawer: "Drawer 6" },
+    { code: "44000094", desc: "LR (EURO-MED) 1 L SOL'N", cost: 91.00, uom: "BOT", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "Drawer 6" },
+    { code: "44000095", desc: "LR (EURO-MED) 500 ML SOL'N", cost: 82.78, uom: "PC", cartQty: { "Combined": 1 }, drawer: "Drawer 6" },
+    { code: "82900002", desc: "GLOVES HYPO-ALLERGENIC 7.0", cost: 21.28, uom: "PR", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "82900003", desc: "GLOVES HYPO-ALLERGENIC 7.5", cost: 21.17, uom: "PR", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "82900004", desc: "GLOVES PAIRED 6.0 STERILE", cost: 14.03, uom: "PR", cartQty: { "Neonatal": 5 }, drawer: "Drawer 6" },
+    { code: "82900010", desc: "GLOVES PAIRED 6.5 STERILE", cost: 13.10, uom: "PR", cartQty: { "Neonatal": 5 }, drawer: "Drawer 6" },
+    { code: "82900009", desc: "GLOVES PAIRED 7.0 STERILE (Dr 6)", cost: 13.10, uom: "PR", cartQty: { "Neonatal": 5 }, drawer: "Drawer 6" },
+    { code: "82900011", desc: "GLOVES PAIRED 7.5 STERILE (Dr 6)", cost: 13.10, uom: "PR", cartQty: { "Neonatal": 5 }, drawer: "Drawer 6" },
+    { code: "86000004", desc: "FEEDING TUBE FR. 5 X 40CM (Dr 6)", cost: 16.10, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 6" },
+    { code: "86000003", desc: "FEEDING TUBE FR. 8 X 40CM (Dr 6)", cost: 16.00, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 6" },
+    { code: "81801032", desc: "CATHETER SUCTION FR. 5 X 50CM (Dr 6)", cost: 27.83, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 6" },
+    { code: "81800012", desc: "CATHETER SUCTION FR. 8 X 53CM (Dr 6)", cost: 34.43, uom: "PC", cartQty: { "Neonatal": 3 }, drawer: "Drawer 6" },
+    { code: "85701009", desc: "SYRINGE EAR STERILE", cost: 89.24, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "Drawer 6" },
+    { code: "86600113", desc: "OXYGEN HUMIDIFIER 500ML (Dr 6)", cost: 202.00, uom: "BOT", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "84000014", desc: "OXYGEN CONNECTING TUBE (Dr 6)", cost: 28.00, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "86000011", desc: "SUCTION CONNECTING TUBE FR. 25 X 210CM", cost: 100.19, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "81400008", desc: "NASAL OXYGEN CANNULA PEDIA (Dr 6)", cost: 39.70, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "86001138", desc: "NASAL CANNULA, SIZE PREEMIE", cost: 1698.77, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "86001139", desc: "NASAL CANNULA, SIZE NEWBORN", cost: 1704.18, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "86001140", desc: "NASAL CANNULA, SIZE INFANT", cost: 1660.17, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+    { code: "83100004", desc: "RINSING GLASS PLASTIC", cost: 18.54, uom: "PC", cartQty: { "Neonatal": 2 }, drawer: "Drawer 6" },
+
     // --- INTUBATION KIT ---
     { code: "80500026", desc: "AMBUBAG ADULT", cost: 2340.19, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
     { code: "80500028", desc: "AMBUBAG NEONATE", cost: 947.79, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
     { code: "87500013", desc: "BACTERIA FILTER BARRIERBAC", cost: 190.49, uom: "PC", cartQty: { "Combined": 2, "Adult": 2 }, drawer: "0 - Intubation Kit" },
-    { code: "43817009", desc: "XYLOCAINE 10% PUMP SPRAY 50ML", cost: 2725.92, uom: "BOT", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
-    { code: "84300015", desc: "LUBRISAFE LUBRICATING JELLY 10 GM", cost: 6.00, uom: "PC", cartQty: { "Combined": 2, "Adult": 2, "Neonatal": 1 }, drawer: "0 - Intubation Kit" }
+    { code: "43817009", desc: "XYLOCAINE 10% PUMP SPRAY 50ML", cost: 2725.92, uom: "BOT", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "84300015", desc: "LUBRISAFE LUBRICATING JELLY 10 GM", cost: 6.00, uom: "PC", cartQty: { "Combined": 2, "Adult": 2, "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "87500019", desc: "NIPPLE & NUT ADAPTOR", cost: 106.60, uom: "PC", cartQty: { "Combined": 5, "Adult": 5 }, drawer: "0 - Intubation Kit" },
+    { code: "85701003", desc: "SYRINGE 10CC W/ NEEDLE LUER LOCK", cost: 8.75, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000012", desc: "INTUBATING STYLET ADULT", cost: 188.32, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000010", desc: "INTUBATING STYLET PEDIA (Kit)", cost: 375.67, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000028", desc: "ENDO TUBE STANDARD SIZE 7.0", cost: 327.27, uom: "PC", cartQty: { "Combined": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000147", desc: "ENDO TUBE STANDARD SIZE 7.5", cost: 327.03, uom: "PC", cartQty: { "Combined": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86001064", desc: "ENDO TUBE STANDARD SIZE 7.0 (Rusch)", cost: 738.15, uom: "PC", cartQty: { "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86001065", desc: "ENDO TUBE STANDARD SIZE 7.5 (Rusch)", cost: 726.30, uom: "PC", cartQty: { "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000143", desc: "ENDO TUBE STANDARD SIZE 2.0 (Kit)", cost: 151.49, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000051", desc: "ENDO TUBE STANDARD SIZE 2.5 (Kit)", cost: 166.82, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000144", desc: "ENDO TUBE STANDARD SIZE 3.0 (Kit)", cost: 330.66, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "86000042", desc: "ENDO TUBE STANDARD SIZE 4.0 (Kit)", cost: 317.20, uom: "PC", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "84700002", desc: "PLASTER LEUKOPLAST 2\" X 5 METERS", cost: 339.35, uom: "RL", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "84700000", desc: "PLASTER LEUKOPLAST 3\" X 5 METERS", cost: 449.92, uom: "RL", cartQty: { "Neonatal": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "82900009", desc: "GLOVES PAIRED 7.0 STERILE", cost: 13.10, uom: "PR", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "82900011", desc: "GLOVES PAIRED 7.5 STERILE", cost: 13.10, uom: "PR", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "82900010", desc: "GLOVES PAIRED 6.5 STERILE", cost: 13.10, uom: "PR", cartQty: { "Neonatal": 2 }, drawer: "0 - Intubation Kit" },
+    { code: "23003347", desc: "Laryngoscope batteries AA (extra)", cost: 0.00, uom: "PC", cartQty: { "Combined": 2, "Adult": 2 }, drawer: "0 - Intubation Kit" },
+    { code: "34040379", desc: "Laryngoscope bulb #4 WA", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "23000106", desc: "Penlight", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "0 - Intubation Kit" },
+    { code: "23003355", desc: "Penlight batteries AAA", cost: 0.00, uom: "PC", cartQty: { "Combined": 2, "Adult": 2 }, drawer: "0 - Intubation Kit" },
+
+    // --- EXTERNAL ITEMS ---
+    { code: "EXT-001", desc: "Cardiac Board", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "External Items" },
+    { code: "EXT-002", desc: "Defibrillator", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "External Items" },
+    { code: "EXT-003", desc: "IV Pole", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "External Items" },
+    { code: "EXT-004", desc: "Monkey Wrench", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "External Items" },
+    { code: "EXT-005", desc: "Oxygen Tank", cost: 0.00, uom: "PC", cartQty: { "Combined": 1, "Adult": 1, "Neonatal": 1 }, drawer: "External Items" },
+    { code: "86600113", desc: "OXYGEN HUMIDIFIER 500ML", cost: 202.00, uom: "BOT", cartQty: { "Combined": 1, "Adult": 1 }, drawer: "External Items" }
   ];
 
   const uomDictionary = { "AMP": "Ampoule", "VL": "Vial", "PC": "Piece", "PAC": "Pack", "RL": "Roll", "TUB": "Tube", "BOX": "Box", "BOT": "Bottle", "PR": "Pair", "PAD": "Pad", "VSET": "Set" };
@@ -160,7 +408,6 @@
       </div>
     `;
 
-    // Filter items that exist in the selected cart's dictionary
     const cartItems = inventory.filter(item => item.cartQty && item.cartQty[selectedCart]);
     
     const groupedByDrawer = cartItems.reduce((acc, item) => {
@@ -227,12 +474,9 @@
     });
 
     resultsContainer.innerHTML = html;
-    
-    // Make sure the footer displays properly
     document.getElementById('auditFooter').style.display = 'block';
   }
 
-  // --- SMART AUTOMATION & COST CALCULATION LOGIC ---
   function autoCalculateStatus(element) {
     const tr = element.closest('tr');
     const select = tr.querySelector('.status-select');
@@ -242,11 +486,9 @@
     const unitCost = parseFloat(tr.dataset.cost) || 0;
     const totalCostCell = tr.querySelector('.total-cost-cell');
     
-    // Update Total Cost
     const actualQty = parseInt(actualQtyStr) || 0;
     totalCostCell.innerText = "₱" + (unitCost * actualQty).toFixed(2);
     
-    // Status Logic
     const currentStatus = select.value;
     if (["Damaged", "For Turn In", "Not Able to Turn In", "Unlabelled"].includes(currentStatus) && element.classList.contains('qty-input')) {
       return; 
@@ -275,7 +517,6 @@
     manualColorOverride(select);
   }
 
-  // --- MANUAL COLOR OVERRIDE ---
   function manualColorOverride(selectElement) {
     const tr = selectElement.closest('tr');
     const status = selectElement.value;
