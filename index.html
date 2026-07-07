@@ -18,6 +18,34 @@
     background-repeat: no-repeat;
   }
 
+  /* --- WELCOME SCREEN TRACKER --- */
+  #aimTrackerOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #1a365d; z-index: 999999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .tracker-box {
+    background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center; max-width: 400px; width: 90%;
+  }
+  .tracker-title { color: #1a365d; font-size: 32px; margin: 0 0 5px 0; font-weight: 900; font-family: 'Montserrat', sans-serif; }
+  .tracker-subtitle { color: #666; font-size: 15px; margin-bottom: 25px; }
+  .tracker-input {
+    width: 90%; padding: 15px; margin-bottom: 20px; border: 2px solid #ccc;
+    border-radius: 6px; font-size: 16px; text-align: center; font-family: inherit;
+    box-sizing: border-box; outline: none;
+  }
+  .tracker-input:focus { border-color: #ee4d2d; box-shadow: 0 0 8px rgba(238,77,45,0.3); }
+  .btn-enter {
+    background-color: #ee4d2d; color: white; border: none; padding: 15px 30px;
+    font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%;
+    transition: background-color 0.3s;
+  }
+  .btn-enter:hover { background-color: #d74326; }
+
+  /* Hide main app initially so they must log in */
+  #mainApp { display: none; }
+
   .header-container {
     padding: 60px 20px 40px;
     position: relative;
@@ -204,6 +232,15 @@
 </head>
 <body>
 
+<div id="aimTrackerOverlay">
+  <div class="tracker-box">
+    <h2 class="tracker-title">A.I.M. System</h2>
+    <p class="tracker-subtitle">Accurate Items Mapping<br><br><strong>Please enter your Unit to access the database.</strong></p>
+    <input type="text" id="trackerUnitName" class="tracker-input" placeholder="e.g., ER, NICU, 3rd Floor">
+    <button class="btn-enter" onclick="unlockAIM()">Enter A.I.M.</button>
+  </div>
+</div>
+
 <div id="mainApp">
   <div class="header-container">
     <a href="https://forms.gle/9vVjje9Rb9ohwyHt6" target="_blank" style="position: fixed; top: 15px; right: 15px; color: white; font-size: 14px; text-decoration: none; font-weight: bold; background-color: #ee4d2d; padding: 8px 16px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 9999;">
@@ -217,7 +254,7 @@
     
     <h1 class="banner-title">
       A.I.M.
-      <span class="banner-subtitle">
+      <span class="banner-subtitle" id="dynamicSubtitle">
         Accurate Items Mapping<br>
         <span style="color: #ffd54f; font-size: 24px;">Combined Emergency Cart</span>
       </span>
@@ -238,15 +275,41 @@
 </div>
 
 <script>
-  // --- WELCOME POP-UP ---
-  document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      let unitName = prompt("Welcome to A.I.M.! Which unit/ward are you from? (e.g., ER, ICU, OR)");
-      if (unitName) {
-        document.querySelector('.banner-subtitle').innerHTML = `Accurate Items Mapping <br><span style="color: #ffd54f; font-size: 24px;">Combined Emergency Cart</span><br><span style="color:white; font-size: 22px; display:inline-block; margin-top:10px;">Welcome, ${unitName} Team!</span>`;
-      }
-    }, 300);
-  });
+  // --- TRACKER FUNCTION (SENDS TO ST. LUKE'S GOOGLE SHEET) ---
+  function unlockAIM() {
+    const unitName = document.getElementById('trackerUnitName').value.trim();
+    
+    if(!unitName) {
+      alert("Please enter your Unit Name to access the tool.");
+      return;
+    }
+
+    const btn = document.querySelector('.btn-enter');
+    btn.innerText = "Logging in...";
+    btn.style.backgroundColor = "#666";
+
+    // Replaces the old Prompt popup and adds the personalized welcome message!
+    document.getElementById('dynamicSubtitle').innerHTML = `Accurate Items Mapping <br><span style="color: #ffd54f; font-size: 24px;">Combined Emergency Cart</span><br><span style="color:white; font-size: 22px; display:inline-block; margin-top:10px;">Welcome, ${unitName} Team!</span>`;
+
+    // Official St. Luke's Tracking URL
+    const scriptURL = "https://script.google.com/a/macros/stlukes.com.ph/s/AKfycbyCQpPPgf1TuHCtiEbjL2exQqm9kpk4L4Zal0rgSfRtdp2FSuU-sC53pFhKIZHPrSUr/exec";
+    
+    const formData = new FormData();
+    formData.append("unitName", unitName);
+    formData.append("cartType", "Accurate Items Mapping (Main Tool)"); 
+
+    // Send data to Google Sheets, hide overlay, and show the app
+    fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+      .then(() => {
+        document.getElementById('aimTrackerOverlay').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+      })
+      .catch(() => {
+        // Unlocks the tool even if their connection is bad
+        document.getElementById('aimTrackerOverlay').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+      });
+  }
 
   // --- INVENTORY DATABASE ---
   const inventory = [
