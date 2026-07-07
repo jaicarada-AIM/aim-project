@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A.I.M. | Emergency Cart Tool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
 
@@ -111,7 +112,7 @@
       <div class="sig-block">
         <strong>Prepared by:</strong>
         <div style="margin-top: 40px;">
-          <input type="text" class="sig-input" placeholder="Type Inspector Name(s) Here...">
+          <input type="text" id="prepByInput" class="sig-input" placeholder="Type Inspector Name(s) Here...">
           Floorstock Inspectors<br>
           Signature Over Printed Name / Date
         </div>
@@ -119,7 +120,7 @@
       <div class="sig-block">
         <strong>Received by:</strong>
         <div style="margin-top: 40px;">
-          <input type="text" class="sig-input" placeholder="Type Unit Manager Name Here...">
+          <input type="text" id="recByInput" class="sig-input" placeholder="Type Unit Manager Name Here...">
           Unit Manager / Representative<br>
           Signature Over Printed Name / Date
         </div>
@@ -127,10 +128,10 @@
     </div>
     <div class="notes-block">
       <strong>NOTE:</strong><br>
-      *Cardiac Defib : <input type="text" class="footer-input" style="width: 200px;" placeholder="Name"> 
-      date <input type="date" class="footer-input" style="width: 140px;"><br>
-      *Intubation Kit Lock: <input type="text" class="footer-input" style="width: 250px;" placeholder="Enter Lock Number"><br>
-      *E-Cart lock: <input type="text" class="footer-input" style="width: 250px;" placeholder="Enter Lock Number">
+      *Cardiac Defib : <input type="text" id="defibName" class="footer-input" style="width: 200px;" placeholder="Name"> 
+      date <input type="date" id="defibDate" class="footer-input" style="width: 140px;"><br>
+      *Intubation Kit Lock: <input type="text" id="intubLock" class="footer-input" style="width: 250px;" placeholder="Enter Lock Number"><br>
+      *E-Cart lock: <input type="text" id="eCartLock" class="footer-input" style="width: 250px;" placeholder="Enter Lock Number">
     </div>
   </div>
 </div>
@@ -447,7 +448,7 @@
               <option value="Adult" ${selectedCart === 'Adult' ? 'selected' : ''}>Adult E-Cart</option>
               <option value="Neonatal" ${selectedCart === 'Neonatal' ? 'selected' : ''}>Neonatal E-Cart</option>
             </select>
-            <button class="btn btn-export" onclick="exportToCSV('${selectedCart}')">📥 Download</button>
+            <button class="btn btn-export" onclick="exportToExcel('${selectedCart}')">📥 Export to Excel</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
           </div>
         </div>
@@ -620,38 +621,65 @@
     if (status === 'Excess') tr.classList.add('row-excess');
   }
 
-  function exportToCSV(cartType) {
+  // --- TRUE EXCEL EXPORT FUNCTION USING SHEETJS ---
+  function exportToExcel(cartType) {
     const rows = document.querySelectorAll('.data-row');
-    let csvContent = "data:text/csv;charset=utf-8,";
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString();
-    
-    csvContent += `E-Cart Audit Report\nCart Type: ${cartType}\nDate: ${date} ${time}\n\n`;
-    csvContent += "Drawer,Audit Status,Expected QTY,Actual QTY,Unit Cost,Total Cost,Expiry Date,Item Code,Description,UOM,Remarks\n";
 
+    // Grab the values typed into the footer!
+    const prepBy = document.getElementById('prepByInput').value || "";
+    const recBy = document.getElementById('recByInput').value || "";
+    const defibName = document.getElementById('defibName').value || "";
+    const defibDate = document.getElementById('defibDate').value || "";
+    const intubLock = document.getElementById('intubLock').value || "";
+    const eCartLock = document.getElementById('eCartLock').value || "";
+
+    // Create the Excel Header
+    let ws_data = [
+      ["A.I.M. Emergency Cart Audit Report"],
+      ["Cart Type:", cartType],
+      ["Date & Time:", date + " " + time],
+      [],
+      ["Drawer", "Audit Status", "Expected QTY", "Actual QTY", "Unit Cost", "Total Cost", "Expiry Date", "Item Code", "Description", "UOM", "Remarks"]
+    ];
+
+    // Read the table rows
     rows.forEach(row => {
       const drawerTitle = row.closest('table').previousElementSibling.innerText.replace('📁 ', '');
-      const status = row.querySelector('.status-select').value;
+      const selectElem = row.querySelector('.status-select');
+      const status = selectElem.options[selectElem.selectedIndex].text; // Gets the clean text like "✅ PRESENT"
       const expectedQty = row.dataset.expected;
       const actualQty = row.querySelector('.qty-input').value || "0";
       const unitCost = row.dataset.cost;
       const totalCost = (parseFloat(unitCost) * (parseInt(actualQty) || 0)).toFixed(2);
       const expiry = row.querySelector('.expiry-input').value || "N/A";
       const code = row.querySelector('.code-cell').innerText;
-      const desc = `"${row.querySelector('.desc-cell').innerText}"`; 
+      const desc = row.querySelector('.desc-cell').innerText;
       const uom = row.querySelector('.uom-cell').innerText;
-      const remarks = `"${row.querySelector('.remarks-input').value.replace(/"/g, '""')}"`;
+      const remarks = row.querySelector('.remarks-input').value;
 
-      csvContent += `${drawerTitle},${status},${expectedQty},${actualQty},₱${unitCost},₱${totalCost},${expiry},${code},${desc},${uom},${remarks}\n`;
+      ws_data.push([
+        drawerTitle, status, expectedQty, actualQty, "₱" + unitCost, "₱" + totalCost, expiry, code, desc, uom, remarks
+      ]);
     });
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Audit_${cartType}_${date.replace(/\//g, '-')}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Attach the Signatures and Lock Numbers to the bottom of the Excel File
+    ws_data.push([]);
+    ws_data.push(["Prepared by:", prepBy]);
+    ws_data.push(["Received by:", recBy]);
+    ws_data.push([]);
+    ws_data.push(["Cardiac Defib:", defibName, "Date:", defibDate]);
+    ws_data.push(["Intubation Kit Lock:", intubLock]);
+    ws_data.push(["E-Cart lock:", eCartLock]);
+
+    // Generate and Download the .xlsx file
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    XLSX.utils.book_append_sheet(wb, ws, "Audit Report");
+    
+    // Save to the user's computer
+    XLSX.writeFile(wb, `Audit_${cartType}_${date.replace(/\//g, '-')}.xlsx`);
   }
 </script>
 </body>
