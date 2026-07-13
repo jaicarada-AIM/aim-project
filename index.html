@@ -276,36 +276,39 @@
 </div>
 
 <script>
-  // --- TRACKER FUNCTION (SENDS TO GOOGLE SHEET) ---
+  // GLOBAL VARIABLE TO REMEMBER WHO LOGGED IN
+  let currentUnitName = "Unknown Unit";
+  
+  // YOUR OFFICIAL ST. LUKE'S CORPORATE LINK
+  const scriptURL = "https://script.google.com/a/macros/stlukes.com.ph/s/AKfycbyCQpPPgf1TuHCtiEbjL2exQqm9kpk4L4Zal0rgSfRtdp2FSuU-sC53pFhKIZHPrSUr/exec";
+
+  // --- TRACKER FUNCTION FOR INITIAL LOGIN ---
   function unlockAIM() {
-    const unitName = document.getElementById('trackerUnitName').value.trim();
+    const unitInput = document.getElementById('trackerUnitName').value.trim();
     
-    if(!unitName) {
+    if(!unitInput) {
       alert("Please enter your Unit Name to access the tool.");
       return;
     }
 
+    currentUnitName = unitInput; // Save it to use later for item clicks!
     const btn = document.querySelector('.btn-enter');
     btn.innerText = "Logging in...";
     btn.style.backgroundColor = "#666";
 
-    document.getElementById('dynamicSubtitle').innerHTML = `Accurate Items Mapping <br><span style="color: #ffd54f; font-size: 24px;">Combined Emergency Cart</span><br><span style="color:white; font-size: 22px; display:inline-block; margin-top:10px;">Welcome, ${unitName} Team!</span>`;
+    document.getElementById('dynamicSubtitle').innerHTML = `Accurate Items Mapping <br><span style="color: #ffd54f; font-size: 24px;">Combined Emergency Cart</span><br><span style="color:white; font-size: 22px; display:inline-block; margin-top:10px;">Welcome, ${currentUnitName} Team!</span>`;
 
-    // YOUR NEW WORKING PERSONAL GMAIL LINK
-    const scriptURL = "https://script.google.com/macros/s/AKfycbws_91AicYdt_xFcWfipXDjSutfj_9ho5kpuMOejK6tQMvQD27VfEUTX__GWcMWM8n9/exec";
-    
     const formData = new FormData();
-    formData.append("unitName", unitName);
+    formData.append("unitName", currentUnitName);
     formData.append("cartType", "Accurate Items Mapping"); 
 
-    // Send data to Google Sheets, hide overlay, and show the app
+    // Send login data
     fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
       .then(() => {
         document.getElementById('aimTrackerOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
       })
       .catch(() => {
-        // Unlocks the tool even if their connection is bad
         document.getElementById('aimTrackerOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
       });
@@ -549,6 +552,8 @@
       const imageFileName = item.code + '.jpg';
 
       card.style.cursor = 'pointer';
+      
+      // THE NEW CLICK TRACKING MAGIC!
       card.onclick = function() {
         modal.style.display = "block";
         modalImg.src = imageFileName;
@@ -563,6 +568,13 @@
         }
 
         captionText.innerHTML = `<span class="modal-item-code">Code: ${item.code}</span><br>${item.desc}${alternativeText}`;
+
+        // Send the specific item click to Google Sheets in the background!
+        const formData = new FormData();
+        formData.append("unitName", currentUnitName); // Remembers their unit
+        formData.append("cartType", "Viewed Item: " + item.code + " (" + item.desc.substring(0, 20) + "...)"); 
+
+        fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' }).catch(() => {});
       };
 
       const fullUomName = uomDictionary[item.uom] || item.uom;
