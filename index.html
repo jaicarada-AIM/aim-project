@@ -43,7 +43,7 @@
   }
   .btn-enter:hover { background-color: #d74326; }
 
-  /* Hide main app initially so they must log in */
+  /* Hide main app initially */
   #mainApp { display: none; }
 
   .header-container {
@@ -250,7 +250,8 @@
     
     <div style="position: fixed; top: 60px; right: 15px; z-index: 9999; background-color: #ee4d2d; padding: 6px 12px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px;">
       <span style="color: white; font-size: 12px; font-weight: bold; font-family: Arial, sans-serif;">📊 Visits:</span>
-      <img src="https://api.visitorbadge.io/api/visitors?path=jaicarada-aim-cart-official-launch-v2&labelColor=%23333333&countColor=%23ffffff&style=flat-square" alt="Visitor Count" style="height: 18px; border-radius: 2px;">
+      <!-- CHANGED TO v3 TO RESET TRACKER TO ZERO -->
+      <img src="https://api.visitorbadge.io/api/visitors?path=jaicarada-aim-cart-official-launch-v3&labelColor=%23333333&countColor=%23ffffff&style=flat-square" alt="Visitor Count" style="height: 18px; border-radius: 2px;">
     </div>
     
     <h1 class="banner-title">
@@ -276,13 +277,11 @@
 </div>
 
 <script>
-  // GLOBAL VARIABLE TO REMEMBER WHO LOGGED IN
   let currentUnitName = "Unknown Unit";
   
-  // YOUR PERSONAL GMAIL TRACKER LINK (Option 2 - Bypasses Firewall!)
+  // YOUR PERSONAL GMAIL TRACKER LINK (Bypasses Firewall)
   const scriptURL = "https://script.google.com/macros/s/AKfycbws_91AicYdt_xFcWfipXDjSutfj_9ho5kpuMOejK6tQMvQD27VfEUTX__GWcMWM8n9/exec";
 
-  // --- TRACKER FUNCTION FOR INITIAL LOGIN ---
   function unlockAIM() {
     const unitInput = document.getElementById('trackerUnitName').value.trim();
     
@@ -291,7 +290,7 @@
       return;
     }
 
-    currentUnitName = unitInput; // Save it to use later for item clicks!
+    currentUnitName = unitInput; 
     const btn = document.querySelector('.btn-enter');
     btn.innerText = "Logging in...";
     btn.style.backgroundColor = "#666";
@@ -302,7 +301,6 @@
     formData.append("unitName", currentUnitName);
     formData.append("cartType", "Accurate Items Mapping"); 
 
-    // Send login data
     fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
       .then(() => {
         document.getElementById('aimTrackerOverlay').style.display = 'none';
@@ -316,7 +314,6 @@
 
   // --- INVENTORY DATABASE ---
   const inventory = [
-    // --- PRIMARY ITEMS WITH ALTERNATIVES ---
     { code: "42964311", desc: "ATROPINE (HIZON) 1 MG/1 ML AMP", uom: "AMP", alt: "Alternative Code(s): 42800076" },
     { code: "44000038", desc: "SOD. BICARBONATE 8.4%(ATLANTIC) 50ML AMP", uom: "AMP", alt: "Alternative Code(s): 44010000" },
     { code: "48840022", desc: "CALCIUM GLUCONATE (EURO-MED) 10% 1,000 MG/10 ML (100 MG/ML) AMP (HAM)", uom: "VL", alt: "Alternative Code(s): 48840009" },
@@ -374,8 +371,6 @@
     { code: "84300015", desc: "LUBRICATING JELLY 10G", uom: "PC", alt: "Alternative Code(s): 84300041" },
     { code: "82900009", desc: "GLOVES PAIRED 7.0 STERILE", uom: "PR", alt: "Alternative Code(s): 82900002, 82900007" },
     { code: "82900011", desc: "GLOVES PAIRED 7.5 STERILE", uom: "PR", alt: "Alternative Code(s): 82900003, 82900008" },
-
-    // --- PRIMARY ITEMS (NO ALTERNATIVES) ---
     { code: "42422511", desc: "ISOKET 10 MG/10 ML (1MG/ML) AMP", uom: "AMP" },
     { code: "42410008", desc: "CORDARONE 150 MG/3 ML (50 MG/ML) AMP HAM)", uom: "AMP" },
     { code: "44005141", desc: "DEXTROSE 50% (EURO-MED) 50 ML VIAL (HAM)", uom: "VL" },
@@ -431,8 +426,6 @@
     { code: "43817009", desc: "XYLOCAINE 10% PUMP SPRAY 50ML", uom: "BOT" },
     { code: "87500019", desc: "NIPPLE & NUT ADAPTOR", uom: "PC" },
     { code: "86600113", desc: "OXYGEN HUMIDIFIER 500ML", uom: "BOT" },
-
-    // --- FULLY DETAILED ALTERNATIVE ITEMS ---
     { code: "80200059", desc: "[ALTERNATIVE] AIRWAY NASAL 7.5 #1-SM-NA7530 -RESPISENZ", uom: "PC", isAlt: true },
     { code: "80200060", desc: "[ALTERNATIVE] AIRWAY NASAL FR24 -SHILEY #8888247015", uom: "PC", isAlt: true },
     { code: "80200063", desc: "[ALTERNATIVE] AIRWAY NASAL SIZE 6.0 FR.24 -TAPPA", uom: "PC", isAlt: true },
@@ -517,22 +510,13 @@
   ];
 
   const uomDictionary = {
-    "AMP": "Ampoule",
-    "VL": "Vial",
-    "PC": "Piece",
-    "PAC": "Pack",
-    "RL": "Roll",
-    "TUB": "Tube",
-    "BOX": "Box",
-    "BOT": "Bottle",
-    "PR": "Pair",
-    "PAD": "Pad",
-    "VSET": "Set"
+    "AMP": "Ampoule", "VL": "Vial", "PC": "Piece", "PAC": "Pack",
+    "RL": "Roll", "TUB": "Tube", "BOX": "Box", "BOT": "Bottle",
+    "PR": "Pair", "PAD": "Pad", "VSET": "Set"
   };
 
   const searchInput = document.getElementById('searchInput');
   const resultsContainer = document.getElementById('resultsContainer');
-  
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("expandedImg");
   const captionText = document.getElementById("modalCaption");
@@ -548,12 +532,9 @@
     items.forEach(item => {
       const card = document.createElement('div');
       card.className = 'item-card';
-      
       const imageFileName = item.code + '.jpg';
-
       card.style.cursor = 'pointer';
       
-      // THE NEW CLICK TRACKING MAGIC!
       card.onclick = function() {
         modal.style.display = "block";
         modalImg.src = imageFileName;
@@ -569,24 +550,20 @@
 
         captionText.innerHTML = `<span class="modal-item-code">Code: ${item.code}</span><br>${item.desc}${alternativeText}`;
 
-        // Send the specific item click to Google Sheets in the background!
         const formData = new FormData();
-        formData.append("unitName", currentUnitName); // Remembers their unit
+        formData.append("unitName", currentUnitName);
         formData.append("cartType", "Viewed Item: " + item.code + " (" + item.desc.substring(0, 20) + "...)"); 
-
         fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' }).catch(() => {});
       };
 
       const fullUomName = uomDictionary[item.uom] || item.uom;
-      
       const altBadge = item.isAlt ? '<div class="badge-alt">Alternative Item</div>' : '';
       
       let altDetailsBox = '';
       if (item.alt) {
-        let cleanAltText = item.alt;
         altDetailsBox = `
           <div style="background-color: #fff3cd; color: #856404; font-size: 11px; padding: 6px; margin-top: 8px; border-radius: 4px; border-left: 4px solid #ffc107; text-align: left; line-height: 1.3;">
-            <strong>Backup Available:</strong><br>${cleanAltText}
+            <strong>Backup Available:</strong><br>${item.alt}
           </div>
         `;
       }
@@ -603,15 +580,8 @@
     });
   }
 
-  function closeModal() {
-    modal.style.display = "none";
-  }
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
+  function closeModal() { modal.style.display = "none"; }
+  window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
 
   displayResults(inventory);
 
